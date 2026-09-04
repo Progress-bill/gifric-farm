@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}{% if product %}Edit Product - {{ product.name }}{% else %}Add New Farm Product{% endif %} - {{ company_name }}{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto px-4 py-12">
+    
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Stock & Product Catalog</span>
+            <h1 class="text-2xl font-extrabold text-gray-900 serif-font">
+                {% if product %}Edit Farm Product: {{ product.name }}{% else %}Add New Agricultural Product / Produce{% endif %}
+            </h1>
+            <p class="text-xs text-gray-500 mt-1">Add or edit vegetables, mushrooms, poultry, eggs, and all fresh farm produce.</p>
+        </div>
+        <a href="{{ url_for('admin') }}" class="text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-xl transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Back to Admin
+        </a>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-xl p-6 sm:p-10 space-y-6">
+        
+        <form action="{% if product %}{{ url_for('admin_edit_product', product_id=product.id) }}{% else %}{{ url_for('admin_add_product') }}{% endif %}" 
+              method="POST" class="space-y-6">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Product Name *</label>
+                    <input type="text" name="name" required value="{{ product.name if product else '' }}" 
+                           placeholder="e.g. Fresh Oyster Mushrooms, Organic Spinach, Whole Chicken" 
+                           class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Category *</label>
+                        <button type="button" onclick="toggleNewCategoryField()" class="text-[11px] font-bold text-emerald-700 hover:underline">
+                            <i class="fa-solid fa-plus-circle mr-0.5"></i> New Category
+                        </button>
+                    </div>
+                    <select id="category_select" name="category_id" onchange="handleCategoryChange(this)" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                        <option value="">-- Select Category --</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if product and product.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                        <option value="__new__">+ Create New Category...</option>
+                    </select>
+
+                    <!-- New Category Input Field (Hidden by default) -->
+                    <div id="new_category_container" class="mt-2 hidden">
+                        <input type="text" id="new_category_name" name="new_category_name" 
+                               placeholder="Enter new category name (e.g. Fresh Vegetables, Mushrooms...)" 
+                               class="w-full text-xs bg-amber-50 border border-amber-300 rounded-xl p-2.5 text-amber-950 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <span class="text-[10px] text-amber-800 block mt-0.5">This category will be created and saved automatically.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price & Stock Management Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-emerald-50/60 p-4 rounded-2xl border border-emerald-100">
+                <div>
+                    <label class="block text-xs font-bold text-emerald-900 uppercase tracking-wider mb-1">Price ($) *</label>
+                    <input type="number" step="0.01" name="price" required value="{{ product.price if product else '' }}" 
+                           placeholder="e.g. 2.50 or 7.00" 
+                           class="w-full text-sm font-bold bg-white border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-emerald-900 uppercase tracking-wider mb-1">Pricing Unit *</label>
+                    <select id="unit_select" name="unit" onchange="handleUnitChange(this)" class="w-full text-sm bg-white border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                        <optgroup label="Fresh Vegetables & Mushrooms">
+                            <option value="per kg" {% if product and product.unit == 'per kg' %}selected{% endif %}>per kg</option>
+                            <option value="per 250g punnet" {% if product and product.unit == 'per 250g punnet' %}selected{% endif %}>per 250g punnet (Mushrooms)</option>
+                            <option value="per 500g punnet" {% if product and product.unit == 'per 500g punnet' %}selected{% endif %}>per 500g punnet (Mushrooms)</option>
+                            <option value="per bundle" {% if product and product.unit == 'per bundle' %}selected{% endif %}>per bundle (Spinach, Greens)</option>
+                            <option value="per crate" {% if product and product.unit == 'per crate' %}selected{% endif %}>per crate (Tomatoes, Veg)</option>
+                            <option value="per head" {% if product and product.unit == 'per head' %}selected{% endif %}>per head (Cabbage, Lettuce)</option>
+                            <option value="per 10kg pocket" {% if product and product.unit == 'per 10kg pocket' %}selected{% endif %}>per 10kg pocket (Potatoes, Onions)</option>
+                        </optgroup>
+                        <optgroup label="Poultry & Eggs">
+                            <option value="per bird" {% if product and product.unit == 'per bird' %}selected{% endif %}>per bird (Whole Chicken)</option>
+                            <option value="per 2kg pack" {% if product and product.unit == 'per 2kg pack' %}selected{% endif %}>per 2kg pack</option>
+                            <option value="per tray of 30" {% if product and product.unit == 'per tray of 30' %}selected{% endif %}>per tray of 30 (Eggs)</option>
+                            <option value="per carton of 12" {% if product and product.unit == 'per carton of 12' %}selected{% endif %}>per carton of 12 (Eggs)</option>
+                            <option value="per 50kg bag" {% if product and product.unit == 'per 50kg bag' %}selected{% endif %}>per 50kg bag (Feeds / Grains)</option>
+                        </optgroup>
+                        <optgroup label="Other">
+                            <option value="custom" {% if product and product.unit not in ['per kg', 'per 250g punnet', 'per 500g punnet', 'per bundle', 'per crate', 'per head', 'per 10kg pocket', 'per bird', 'per 2kg pack', 'per tray of 30', 'per carton of 12', 'per 50kg bag'] %}selected{% endif %}>Custom Unit...</option>
+                        </optgroup>
+                    </select>
+
+                    <div id="custom_unit_container" class="mt-2 {% if not product or product.unit in ['per kg', 'per 250g punnet', 'per 500g punnet', 'per bundle', 'per crate', 'per head', 'per 10kg pocket', 'per bird', 'per 2kg pack', 'per tray of 30', 'per carton of 12', 'per 50kg bag'] %}hidden{% endif %}">
+                        <input type="text" id="custom_unit" name="custom_unit" value="{{ product.unit if product and product.unit not in ['per kg', 'per 250g punnet', 'per 500g punnet', 'per bundle', 'per crate', 'per head', 'per 10kg pocket', 'per bird', 'per 2kg pack', 'per tray of 30', 'per carton of 12', 'per 50kg bag'] else '' }}" 
+                               placeholder="e.g. per bunch, per packet..." 
+                               class="w-full text-xs bg-white border border-emerald-300 rounded-xl p-2.5 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-emerald-900 uppercase tracking-wider mb-1">Available Stock (Units) *</label>
+                    <input type="number" name="stock_quantity" required min="0" value="{{ product.stock_quantity if product else '100' }}" 
+                           placeholder="100" 
+                           class="w-full text-sm font-bold text-emerald-950 bg-white border border-emerald-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                    <span class="text-[10px] text-emerald-700 block mt-1">Updates automatically upon sales.</span>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Image URL *</label>
+                <input type="url" name="image_url" id="image_url" required value="{{ product.image_url if product else 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80' }}" 
+                       placeholder="https://images.unsplash.com/photo-..." 
+                       class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                
+                <!-- Preset Sample Images -->
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <span class="text-[10px] text-gray-400 font-semibold py-1">Quick Photos:</span>
+                    <button type="button" onclick="document.getElementById('image_url').value='https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80'" class="text-[10px] bg-gray-100 hover:bg-emerald-50 hover:text-emerald-800 text-gray-600 px-2.5 py-1 rounded-lg transition font-medium">🥬 Vegetables</button>
+                    <button type="button" onclick="document.getElementById('image_url').value='https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80'" class="text-[10px] bg-gray-100 hover:bg-emerald-50 hover:text-emerald-800 text-gray-600 px-2.5 py-1 rounded-lg transition font-medium">🍄 Mushrooms</button>
+                    <button type="button" onclick="document.getElementById('image_url').value='https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=800&q=80'" class="text-[10px] bg-gray-100 hover:bg-emerald-50 hover:text-emerald-800 text-gray-600 px-2.5 py-1 rounded-lg transition font-medium">🍅 Tomatoes</button>
+                    <button type="button" onclick="document.getElementById('image_url').value='https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=800&q=80'" class="text-[10px] bg-gray-100 hover:bg-emerald-50 hover:text-emerald-800 text-gray-600 px-2.5 py-1 rounded-lg transition font-medium">🍗 Whole Chicken</button>
+                    <button type="button" onclick="document.getElementById('image_url').value='https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=800&q=80'" class="text-[10px] bg-gray-100 hover:bg-emerald-50 hover:text-emerald-800 text-gray-600 px-2.5 py-1 rounded-lg transition font-medium">🥚 Farm Eggs</button>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Short Description</label>
+                <input type="text" name="short_description" value="{{ product.short_description if product else '' }}" 
+                       placeholder="Brief summary for product card (e.g. Crisp organic farm-harvested button mushrooms)..." 
+                       class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Full Description *</label>
+                <textarea name="description" required rows="4" placeholder="Detailed product specifications, harvesting method, storage recommendations..." 
+                          class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">{% if product %}{{ product.description }}{% endif %}</textarea>
+            </div>
+
+            <!-- Options Checkboxes -->
+            <div class="flex flex-wrap gap-6 pt-2 text-xs font-bold text-gray-700">
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" name="is_featured" {% if not product or product.is_featured %}checked{% endif %} class="w-4 h-4 text-emerald-600 rounded">
+                    <span>Featured on Homepage</span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" name="is_organic" {% if not product or product.is_organic %}checked{% endif %} class="w-4 h-4 text-emerald-600 rounded">
+                    <span>Organic Farm Certified</span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" name="is_halal" {% if product and product.is_halal %}checked{% endif %} class="w-4 h-4 text-emerald-600 rounded">
+                    <span>Halal Certified (if poultry/meat)</span>
+                </label>
+            </div>
+
+            <div class="pt-4 flex items-center space-x-4">
+                <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3.5 px-8 rounded-xl shadow transition text-sm">
+                    {% if product %}Save Product & Stock Updates{% else %}Add Product to Inventory{% endif %}
+                </button>
+                <a href="{{ url_for('admin') }}" class="text-xs font-bold text-gray-500 hover:text-gray-700">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    function handleCategoryChange(select) {
+        const newCatBox = document.getElementById('new_category_container');
+        const newCatInput = document.getElementById('new_category_name');
+        if (select.value === '__new__') {
+            newCatBox.classList.remove('hidden');
+            newCatInput.focus();
+            newCatInput.required = true;
+        } else {
+            newCatBox.classList.add('hidden');
+            newCatInput.required = false;
+        }
+    }
+
+    function toggleNewCategoryField() {
+        const select = document.getElementById('category_select');
+        select.value = '__new__';
+        handleCategoryChange(select);
+    }
+
+    function handleUnitChange(select) {
+        const customUnitBox = document.getElementById('custom_unit_container');
+        const customUnitInput = document.getElementById('custom_unit');
+        if (select.value === 'custom') {
+            customUnitBox.classList.remove('hidden');
+            customUnitInput.focus();
+            customUnitInput.required = true;
+        } else {
+            customUnitBox.classList.add('hidden');
+            customUnitInput.required = false;
+        }
+    }
+</script>
+
+{% endblock %}

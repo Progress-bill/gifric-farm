@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - {{ company_name }}{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    
+    <!-- Breadcrumb Navigation -->
+    <nav class="flex text-xs text-gray-500 mb-8 space-x-2">
+        <a href="{{ url_for('index') }}" class="hover:text-emerald-700">Home</a>
+        <span>/</span>
+        <a href="{{ url_for('products') }}" class="hover:text-emerald-700">Products</a>
+        <span>/</span>
+        <a href="{{ url_for('products', category=product.category.slug) }}" class="hover:text-emerald-700">{{ product.category_name }}</a>
+        <span>/</span>
+        <span class="text-gray-900 font-semibold truncate max-w-xs">{{ product.name }}</span>
+    </nav>
+
+    <!-- Product Layout Grid -->
+    <div class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-10 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        <!-- Left: Image Gallery Preview -->
+        <div class="lg:col-span-6 space-y-4">
+            <div class="relative rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 h-96 sm:h-[450px]">
+                <img id="main-product-img" src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                
+                <div class="absolute top-4 left-4 flex flex-col space-y-1.5">
+                    {% if product.is_organic %}
+                        <span class="bg-emerald-700 text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                            <i class="fa-solid fa-seedling mr-1"></i> Organic Farm
+                        </span>
+                    {% endif %}
+                    {% if product.is_halal %}
+                        <span class="bg-amber-600 text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                            <i class="fa-solid fa-certificate mr-1"></i> Halal Dressed
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Product Purchasing Form -->
+        <div class="lg:col-span-6 flex flex-col justify-between space-y-6">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">
+                    {{ product.category_name }}
+                </span>
+
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-3 mb-2 serif-font">
+                    {{ product.name }}
+                </h1>
+
+                <!-- Price Block -->
+                <div class="flex items-baseline space-x-3 py-3 border-y border-gray-100 my-4">
+                    <span class="text-3xl font-black text-emerald-950">${{ "%.2f"|format(product.price) }}</span>
+                    <span class="text-sm text-gray-500 font-medium">/ {{ product.unit }}</span>
+                    {% if product.stock_quantity > 0 %}
+                        <span class="ml-auto text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md font-bold">In Stock ({{ product.stock_quantity }} available)</span>
+                    {% else %}
+                        <span class="ml-auto text-xs text-red-600 bg-red-50 px-2.5 py-1 rounded-md font-bold">Out of Stock</span>
+                    {% endif %}
+                </div>
+
+                <p class="text-sm text-gray-600 leading-relaxed mb-6">
+                    {{ product.description }}
+                </p>
+
+                <!-- Key Attributes Badges -->
+                <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-6">
+                    <div class="flex items-center space-x-2 text-gray-700">
+                        <i class="fa-solid fa-truck-fast text-emerald-700 text-sm"></i>
+                        <span>Express Cold-Chain Delivery</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-gray-700">
+                        <i class="fa-solid fa-wheat-awn text-amber-600 text-sm"></i>
+                        <span>100% Grain-Fed</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-gray-700">
+                        <i class="fa-solid fa-snowflake text-sky-600 text-sm"></i>
+                        <span>Hygienically Blast Chilled</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-gray-700">
+                        <i class="fa-solid fa-shield-cat text-emerald-700 text-sm"></i>
+                        <span>Zero Antibiotic Residue</span>
+                    </div>
+                </div>
+
+                <!-- Quantity Selection & Cart Action -->
+                <div class="space-y-4 pt-2">
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Select Quantity</label>
+                    
+                    {% if product.stock_quantity > 0 %}
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center border border-gray-300 rounded-xl bg-gray-50 p-1">
+                                <button type="button" onclick="decrementQty()" class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-gray-700 hover:bg-gray-100 text-lg">-</button>
+                                <input type="number" id="detail-qty" value="1" min="1" max="{{ product.stock_quantity }}" class="w-14 text-center font-extrabold text-sm bg-transparent focus:outline-none">
+                                <button type="button" onclick="incrementQty()" class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-gray-700 hover:bg-gray-100 text-lg">+</button>
+                            </div>
+
+                            <button onclick="addCurrentProductToCart()" 
+                                    class="flex-grow bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2 text-sm">
+                                <i class="fa-solid fa-basket-shopping text-lg"></i>
+                                <span>Add To Basket</span>
+                            </button>
+                        </div>
+                    {% else %}
+                        <button disabled class="w-full bg-gray-200 text-gray-400 font-bold py-4 px-6 rounded-xl text-sm cursor-not-allowed">
+                            Currently Out of Stock
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Wholesale Callout -->
+            <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-boxes-packing text-amber-700 text-lg"></i>
+                    <span>Ordering over 50kg or 100 birds? Contact us for wholesale pricing.</span>
+                </div>
+                <a href="https://wa.me/263772239953?text={{ ('Hello Gifric Farm, I would like to inquire about wholesale pricing for: ' + product.name + ' ($' + '%.2f'|format(product.price) + '/' + product.unit + '). Please advise on bulk rates and delivery.')|urlencode }}" 
+                   target="_blank"
+                   class="font-bold underline hover:text-amber-950 flex items-center">
+                    <i class="fa-brands fa-whatsapp mr-1 text-emerald-700"></i> Inquire
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+        <div class="mt-16">
+            <h3 class="text-2xl font-extrabold text-gray-900 mb-6 serif-font">You May Also Like</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {% for item in related_products %}
+                    <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm farm-card flex flex-col justify-between">
+                        <div>
+                            <div class="h-40 bg-gray-100 overflow-hidden relative">
+                                <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+                                <a href="{{ url_for('product_detail', slug=item.slug) }}" class="absolute inset-0"></a>
+                            </div>
+                            <div class="p-4">
+                                <h4 class="text-xs font-bold text-gray-900 line-clamp-1">
+                                    <a href="{{ url_for('product_detail', slug=item.slug) }}">{{ item.name }}</a>
+                                </h4>
+                                <span class="text-xs font-extrabold text-emerald-900 block mt-1">${{ "%.2f"|format(item.price) }} / {{ item.unit }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+<script>
+    function incrementQty() {
+        const input = document.getElementById('detail-qty');
+        input.value = parseInt(input.value || 1) + 1;
+    }
+
+    function decrementQty() {
+        const input = document.getElementById('detail-qty');
+        if (parseInt(input.value) > 1) {
+            input.value = parseInt(input.value) - 1;
+        }
+    }
+
+    function addCurrentProductToCart() {
+        const input = document.getElementById('detail-qty');
+        const qty = parseInt(input ? input.value : 1) || 1;
+        const productData = {{ product.to_dict()|tojson }};
+        if (window.gifricCart) {
+            window.gifricCart.addItem(productData, qty);
+        } else {
+            console.error('Gifric cart engine not loaded');
+        }
+    }
+</script>
+
+{% endblock %}

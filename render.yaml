@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: gifric-farm
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SECRET_KEY
+        generateValue: true
+      - key: BACKEND_WHATSAPP_NUMBER
+        value: "+263 77 223 9953"

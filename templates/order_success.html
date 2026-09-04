@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed - {{ order.order_number }} - {{ company_name }}{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto px-4 py-12">
+    
+    <!-- Success Banner Card -->
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden">
+        
+        <div class="bg-emerald-900 text-white p-8 text-center relative">
+            <div class="w-16 h-16 bg-amber-500 text-slate-950 rounded-full flex items-center justify-center text-3xl font-extrabold mx-auto mb-3 shadow-lg">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <span class="text-xs font-bold uppercase tracking-widest text-amber-300">Order Successfully Placed</span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold mt-1 serif-font">Thank You, {{ order.customer_name }}!</h1>
+            <p class="text-xs text-emerald-200 mt-2">Order Tracking Code: <strong class="text-amber-400 font-mono text-sm">{{ order.order_number }}</strong></p>
+        </div>
+
+        <div class="p-6 sm:p-10 space-y-8">
+            
+            <!-- Automated WhatsApp Order Dispatch Banner -->
+            <div id="wa-dispatch-card" class="bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-300 p-5 rounded-2xl shadow-sm space-y-3">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#25D366] text-white flex items-center justify-center text-2xl shadow">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-sm text-emerald-950 flex items-center">
+                                WhatsApp Order Message Ready
+                                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 animate-pulse">
+                                    ● Connected to Backend
+                                </span>
+                            </h4>
+                            <p class="text-xs text-emerald-800 mt-0.5">
+                                Directly addresses farm backend contact: <strong class="text-emerald-950 font-mono">+263 77 223 9953</strong> (Gifric Farm / Ezekiel)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-1 flex flex-col sm:flex-row items-center gap-3">
+                    <a href="{{ whatsapp_url }}" target="_blank" id="wa-direct-link" 
+                       class="w-full sm:w-auto bg-[#25D366] hover:bg-[#1fb855] text-white font-extrabold text-xs px-6 py-3 rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                        <span>Open WhatsApp with Pre-filled Order</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-1"></i>
+                    </a>
+                    <span class="text-[11px] text-gray-500 text-center sm:text-left">
+                        Opens WhatsApp with the complete order items, delivery address, and total amount filled in.
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Delivery Status Message -->
+            <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex items-start space-x-3 text-emerald-900 text-xs">
+                <i class="fa-solid fa-truck-ramp-box text-emerald-700 text-lg mt-0.5"></i>
+                <div>
+                    <h4 class="font-bold text-sm">Your fresh farm produce & poultry order is being prepared!</h4>
+                    <p class="text-emerald-700 mt-0.5">Our logistics team will dispatch your items to <strong>{{ order.delivery_address }}, {{ order.city }}</strong>. We will contact you at <strong>{{ order.phone }}</strong> prior to delivery.</p>
+                </div>
+            </div>
+
+            <!-- Payment Instructions if EcoCash -->
+            {% if order.payment_method == 'ecocash' %}
+                <div class="bg-emerald-50 border border-emerald-300 p-5 rounded-2xl space-y-2 text-emerald-950">
+                    <h4 class="font-bold text-sm flex items-center text-emerald-900">
+                        <i class="fa-solid fa-mobile-screen-button text-emerald-700 mr-2"></i> EcoCash Payment Instructions
+                    </h4>
+                    <p class="text-xs text-emerald-800">Please send <strong>${{ "%.2f"|format(order.total_amount) }}</strong> via EcoCash using your order number <strong class="font-mono text-emerald-950 font-extrabold">{{ order.order_number }}</strong> as reference:</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs bg-white p-3 rounded-xl border border-emerald-200 font-mono">
+                        <div><span class="text-gray-500">EcoCash Number:</span> <strong class="text-emerald-900 font-bold">+263 77 223 9953</strong></div>
+                        <div><span class="text-gray-500">Account Name:</span> <strong class="text-emerald-950 font-bold">Nyasha Florance Murau</strong></div>
+                        <div><span class="text-gray-500">Method:</span> <strong>Send Money / Merchant Payment</strong></div>
+                        <div><span class="text-gray-500">Reference:</span> <strong class="text-amber-600">{{ order.order_number }}</strong></div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Order Itemized Table -->
+            <div>
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">Order Items</h3>
+                <div class="space-y-3">
+                    {% for item in order.items %}
+                        <div class="flex justify-between items-center text-xs py-2 border-b border-gray-50">
+                            <div>
+                                <span class="font-bold text-emerald-900 mr-2">{{ item.quantity }}x</span>
+                                <span class="font-medium text-gray-800">{{ item.product_name }}</span>
+                                <span class="text-gray-400 block text-[10px]">${{ "%.2f"|format(item.price) }} each</span>
+                            </div>
+                            <span class="font-bold text-gray-900">${{ "%.2f"|format(item.subtotal) }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-4 pt-3 border-t-2 border-gray-100 flex justify-between items-center font-extrabold text-base text-emerald-950">
+                    <span>Total Amount</span>
+                    <span class="text-xl text-emerald-800">${{ "%.2f"|format(order.total_amount) }}</span>
+                </div>
+            </div>
+
+            <!-- Customer & Order Meta -->
+            <div class="grid grid-cols-2 gap-4 text-xs bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <div>
+                    <span class="text-gray-400 block">Payment Method:</span>
+                    <span class="font-bold text-gray-800 uppercase">{{ order.payment_method.replace('_', ' ') }}</span>
+                </div>
+                <div>
+                    <span class="text-gray-400 block">Order Date:</span>
+                    <span class="font-bold text-gray-800">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4">
+                <a href="{{ url_for('products') }}" class="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-6 py-3 rounded-xl text-center transition">
+                    <i class="fa-solid fa-basket-shopping mr-1"></i> Order More Fresh Produce
+                </a>
+                <a href="{{ whatsapp_url }}" target="_blank" class="w-full sm:w-auto bg-[#25D366] hover:bg-[#1fb855] text-white font-bold text-xs px-6 py-3 rounded-xl text-center transition">
+                    <i class="fa-brands fa-whatsapp mr-1.5 text-sm"></i> WhatsApp Order Message
+                </a>
+                <button onclick="window.print()" class="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-6 py-3 rounded-xl transition">
+                    <i class="fa-solid fa-print mr-1"></i> Print Invoice
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Clear shopping cart upon successful order
+    if (window.gifricCart) {
+        window.gifricCart.clearCart();
+    }
+
+    // 2. Automatic WhatsApp trigger
+    const waUrl = {{ whatsapp_url|tojson }};
+    {% if auto_wa %}
+    const autoKey = 'wa_dispatched_{{ order.order_number }}';
+    if (!sessionStorage.getItem(autoKey)) {
+        sessionStorage.setItem(autoKey, '1');
+        // Give browser 500ms to render the page then launch WhatsApp
+        setTimeout(() => {
+            const win = window.open(waUrl, '_blank');
+            if (!win || win.closed || typeof win.closed === 'undefined') {
+                // Popup blocked by browser policy, pulse the prominent WhatsApp card
+                const banner = document.getElementById('wa-dispatch-card');
+                if (banner) {
+                    banner.classList.add('ring-4', 'ring-emerald-400');
+                }
+            }
+        }, 500);
+    }
+    {% endif %}
+});
+</script>
+
+{% endblock %}

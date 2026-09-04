@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - {{ company_name }}{% endblock %}
+
+{% block content %}
+
+<!-- Header Banner -->
+<div class="bg-emerald-900 text-white py-16 px-4 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto text-center">
+        <span class="text-xs font-bold uppercase tracking-widest text-amber-300 bg-emerald-800/80 px-3 py-1 rounded-full">Ethical Agricultural Excellence</span>
+        <h1 class="text-3xl sm:text-5xl font-extrabold mt-3 serif-font">About Gifric Farm</h1>
+        <p class="text-emerald-200 text-sm sm:text-base mt-3 max-w-2xl mx-auto font-light leading-relaxed">
+            Pioneering organic, sustainable poultry farming and fresh chicken supply in Hatfield, Harare.
+        </p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-16 space-y-20">
+
+    <!-- Mission & Story Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+            <span class="text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">Our Heritage</span>
+            <h2 class="text-3xl font-extrabold text-gray-900 serif-font">Raised with Care, Delivered Fresh</h2>
+            <p class="text-sm text-gray-600 leading-relaxed">
+                Founded with a deep commitment to sustainable agriculture, <strong>Gifric Farm</strong> is located at 84 St Andrews Rd, Hatfield, Harare. We supply high-quality organic poultry and fresh chicken at $7 per bird to households, restaurants, and retail partners.
+            </p>
+            <p class="text-sm text-gray-600 leading-relaxed">
+                We believe that premium chicken meat and eggs start with animal welfare and natural nutrition. Our free-range broilers and layers are reared in humane, open-air housing, fed 100% organic grain feeds formulated on our farm, and cared for by certified livestock specialists.
+            </p>
+            
+            <div class="grid grid-cols-2 gap-4 text-xs font-bold text-gray-800 pt-2">
+                <div class="flex items-center space-x-2 bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                    <i class="fa-solid fa-leaf text-emerald-700 text-base"></i>
+                    <span>100% Non-GMO Feed</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-amber-50 p-3 rounded-xl border border-amber-100">
+                    <i class="fa-solid fa-shield-cat text-amber-700 text-base"></i>
+                    <span>Zero Antibiotics & Steroids</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative">
+            <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=1000&q=80" 
+                 alt="Gifric Farm Pasture" class="rounded-3xl shadow-xl w-full h-[400px] object-cover">
+        </div>
+    </div>
+
+    <!-- Core Pillars -->
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 sm:p-12 shadow-sm">
+        <div class="text-center max-w-xl mx-auto mb-12">
+            <h2 class="text-2xl font-extrabold text-gray-900 serif-font">The Gifric Farm Standard</h2>
+            <p class="text-xs text-gray-500 mt-2">Guaranteeing freshness and quality at every stage of production.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center space-y-3">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-2xl mx-auto">
+                    <i class="fa-solid fa-drumstick-bite"></i>
+                </div>
+                <h3 class="text-base font-bold text-gray-900">Fresh Whole Chicken ($7/bird)</h3>
+                <p class="text-xs text-gray-500 leading-relaxed">Dressed under strict sanitary standards and blast chilled immediately to preserve natural moisture and tenderness.</p>
+            </div>
+
+            <div class="text-center space-y-3">
+                <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-2xl mx-auto">
+                    <i class="fa-solid fa-egg"></i>
+                </div>
+                <h3 class="text-base font-bold text-gray-900">Farm Fresh Eggs</h3>
+                <p class="text-xs text-gray-500 leading-relaxed">Gathered daily from pasture-raised hens with rich golden yolks and high nutritional value.</p>
+            </div>
+
+            <div class="text-center space-y-3">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-2xl mx-auto">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <h3 class="text-base font-bold text-gray-900">Direct Farm Delivery</h3>
+                <p class="text-xs text-gray-500 leading-relaxed">Temperature-controlled delivery trucks bring fresh orders straight from our farm to homes and retailers.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

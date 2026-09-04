@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ company_name }} - Premium Organic Chicken & Poultry Products{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        amber: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Main JavaScript File -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</head>
+<body class="bg-slate-50 flex flex-col min-h-screen">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-emerald-900 text-emerald-100 text-xs py-2 px-4 border-b border-emerald-800">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-1 sm:space-y-0">
+            <div class="flex items-center space-x-4">
+                <span><i class="fa-solid fa-truck-fast text-amber-400 mr-1.5"></i> Daily Fresh Delivery to Your Doorstep & Stores</span>
+                <span class="hidden md:inline text-emerald-700">|</span>
+                <span class="hidden md:inline"><i class="fa-solid fa-award text-amber-400 mr-1.5"></i> 100% Organic & Halal Certified</span>
+            </div>
+            <div class="flex items-center space-x-4 text-emerald-200">
+                <a href="tel:{{ company_phone }}" class="hover:text-white transition"><i class="fa-solid fa-phone mr-1"></i> {{ company_phone }}</a>
+                <a href="mailto:{{ company_email }}" class="hidden sm:inline hover:text-white transition"><i class="fa-solid fa-envelope mr-1"></i> {{ company_email }}</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <nav class="sticky top-0 z-40 nav-glass shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Logo -->
+                <a href="{{ url_for('index') }}" class="flex items-center space-x-3 group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-700 text-amber-400 flex items-center justify-center text-2xl shadow-md group-hover:scale-105 transition">
+                        <i class="fa-solid fa-egg"></i>
+                    </div>
+                    <div>
+                        <span class="serif-font text-2xl font-extrabold text-emerald-900 tracking-wide block leading-none">Gifric Farm</span>
+                        <span class="text-[10px] uppercase font-bold text-amber-600 tracking-widest">Agricultural Producers & Estate</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden lg:flex items-center space-x-8 text-sm font-semibold text-gray-700">
+                    <a href="{{ url_for('index') }}" class="hover:text-emerald-700 transition">Home</a>
+                    <a href="{{ url_for('products') }}" class="hover:text-emerald-700 transition">Fresh Farm Produce</a>
+                    <a href="{{ url_for('services') }}" class="hover:text-emerald-700 transition">Wholesale & Bulk Supply</a>
+                    <a href="{{ url_for('about') }}" class="hover:text-emerald-700 transition">Our Farm</a>
+                    <a href="{{ url_for('contact') }}" class="hover:text-emerald-700 transition">Contact Us</a>
+                </div>
+
+                <!-- Action Buttons: Search & Cart & Admin -->
+                <div class="flex items-center space-x-4">
+                    
+                    <!-- Search Input Form -->
+                    <form action="{{ url_for('products') }}" method="GET" class="hidden sm:flex items-center relative">
+                        <input type="text" name="q" placeholder="Search produce, mushrooms, chicken..." 
+                               class="w-48 lg:w-60 text-xs bg-gray-100 border border-gray-200 rounded-full py-2 pl-4 pr-9 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition">
+                        <button type="submit" class="absolute right-3 text-gray-400 hover:text-emerald-700 text-xs">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
+
+                    <!-- Cart Trigger Button -->
+                    <button type="button" onclick="window.gifricCart.openDrawer()" class="relative p-2.5 bg-emerald-50 text-emerald-800 rounded-full hover:bg-emerald-100 transition cursor-pointer">
+                        <i class="fa-solid fa-basket-shopping text-lg"></i>
+                        <span class="cart-count-badge absolute -top-1 -right-1 bg-amber-500 text-white font-extrabold text-[11px] w-5 h-5 rounded-full flex items-center justify-center badge-pulse hidden">0</span>
+                    </button>
+
+                    <!-- Admin Link -->
+                    <a href="{{ url_for('admin') }}" class="hidden sm:inline-flex items-center text-xs font-bold text-gray-600 hover:text-emerald-700 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg transition">
+                        <i class="fa-solid fa-user-shield mr-1.5"></i> Admin
+                    </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="lg:hidden p-2 text-gray-600 hover:text-emerald-700 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu Dropdown -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-6 space-y-3">
+            <a href="{{ url_for('index') }}" class="block text-sm font-semibold text-gray-800 hover:text-emerald-700 py-1">Home</a>
+            <a href="{{ url_for('products') }}" class="block text-sm font-semibold text-gray-800 hover:text-emerald-700 py-1">Fresh Farm Produce</a>
+            <a href="{{ url_for('services') }}" class="block text-sm font-semibold text-gray-800 hover:text-emerald-700 py-1">Wholesale & Bulk Supply</a>
+            <a href="{{ url_for('about') }}" class="block text-sm font-semibold text-gray-800 hover:text-emerald-700 py-1">Our Farm</a>
+            <a href="{{ url_for('contact') }}" class="block text-sm font-semibold text-gray-800 hover:text-emerald-700 py-1">Contact Us</a>
+            <a href="{{ url_for('admin') }}" class="block text-sm font-semibold text-emerald-700 py-1"><i class="fa-solid fa-user-shield mr-1"></i> Admin Portal</a>
+            <form action="{{ url_for('products') }}" method="GET" class="pt-2">
+                <input type="text" name="q" placeholder="Search produce, mushrooms, chicken..." class="w-full text-xs bg-gray-100 border border-gray-200 rounded-lg py-2 px-3 focus:outline-none">
+            </form>
+        </div>
+    </nav>
+
+    <!-- Flash Messages Container -->
+    <div class="max-w-7xl mx-auto px-4 mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 mb-4 rounded-xl text-sm font-medium flex items-center justify-between {% if category == 'error' %}bg-red-50 text-red-800 border border-red-200{% else %}bg-emerald-50 text-emerald-900 border border-emerald-200{% endif %}">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid {% if category == 'error' %}fa-triangle-exclamation text-red-600{% else %}fa-circle-check text-emerald-600{% endif %}"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="text-xs text-gray-400 hover:text-gray-600">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Page Content -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Slide-Out Shopping Cart Drawer -->
+    <div id="cart-drawer-backdrop" onclick="gifricCart.closeDrawer()" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity"></div>
+    <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white z-50 shadow-2xl flex flex-col transform translate-x-full cart-drawer">
+        <!-- Drawer Header -->
+        <div class="p-5 border-b border-gray-100 flex items-center justify-between bg-emerald-900 text-white">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-basket-shopping text-amber-400"></i>
+                <h3 class="font-bold text-lg">Your Order Basket</h3>
+            </div>
+            <button onclick="gifricCart.closeDrawer()" class="text-emerald-200 hover:text-white text-xl p-1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Drawer Body Items List -->
+        <div id="cart-drawer-items" class="flex-grow overflow-y-auto p-4 space-y-3">
+            <!-- Rendered dynamically by main.js -->
+        </div>
+
+        <!-- Drawer Footer -->
+        <div class="p-5 border-t border-gray-100 bg-gray-50">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-sm font-medium text-gray-600">Subtotal</span>
+                <span id="cart-drawer-subtotal" class="text-xl font-bold text-emerald-900">$0.00</span>
+            </div>
+            <p class="text-[11px] text-gray-500 mb-4"><i class="fa-solid fa-truck text-emerald-600"></i> Delivery & taxes calculated at checkout.</p>
+            <div class="space-y-2">
+                <a href="{{ url_for('checkout') }}" class="block w-full text-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 rounded-xl shadow-md transition">
+                    Proceed to Checkout <i class="fa-solid fa-arrow-right ml-1"></i>
+                </a>
+                <button onclick="gifricCart.closeDrawer()" class="block w-full text-center text-xs font-semibold text-gray-600 hover:text-gray-800 py-2">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-emerald-950 text-gray-300 mt-20 pt-16 pb-12 border-t border-emerald-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                
+                <!-- Col 1: About Farm -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-700 text-amber-400 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-egg"></i>
+                        </div>
+                        <span class="serif-font text-2xl font-bold text-white">Gifric Farm</span>
+                    </div>
+                    <p class="text-xs leading-relaxed text-gray-300 mb-2 font-semibold italic text-amber-300">
+                        "{{ company_motto }}"
+                    </p>
+                    <p class="text-xs leading-relaxed text-gray-400 mb-6">
+                        Gifric Farm is a premier agricultural poultry estate committed to producing organic, 100% natural, free-range chicken and golden yolk eggs for households, restaurants, and commercial distributors in Harare.
+                    </p>
+                    <div class="flex space-x-3 text-emerald-400">
+                        <a href="#" class="w-8 h-8 rounded-full bg-emerald-900 hover:bg-emerald-800 flex items-center justify-center transition"><i class="fa-brands fa-facebook-f text-xs"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-emerald-900 hover:bg-emerald-800 flex items-center justify-center transition"><i class="fa-brands fa-instagram text-xs"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-emerald-900 hover:bg-emerald-800 flex items-center justify-center transition"><i class="fa-brands fa-whatsapp text-xs"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-emerald-800 pb-2">Quick Links</h4>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><a href="{{ url_for('index') }}" class="hover:text-amber-400 transition"><i class="fa-solid fa-angle-right text-emerald-600 mr-1.5"></i> Home</a></li>
+                        <li><a href="{{ url_for('products') }}" class="hover:text-amber-400 transition"><i class="fa-solid fa-angle-right text-emerald-600 mr-1.5"></i> Fresh Chicken Catalog</a></li>
+                        <li><a href="{{ url_for('services') }}" class="hover:text-amber-400 transition"><i class="fa-solid fa-angle-right text-emerald-600 mr-1.5"></i> Wholesale & Day-Old Chicks</a></li>
+                        <li><a href="{{ url_for('about') }}" class="hover:text-amber-400 transition"><i class="fa-solid fa-angle-right text-emerald-600 mr-1.5"></i> About Our Farming Philosophy</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="hover:text-amber-400 transition"><i class="fa-solid fa-angle-right text-emerald-600 mr-1.5"></i> Contact & Bulk Orders</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Categories -->
+                <div>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-emerald-800 pb-2">Categories</h4>
+                    <ul class="space-y-2.5 text-xs">
+                        {% for cat in all_categories %}
+                            <li><a href="{{ url_for('products', category=cat.slug) }}" class="hover:text-amber-400 transition"><i class="fa-solid fa-angle-right text-emerald-600 mr-1.5"></i> {{ cat.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Col 4: Contact & Newsletter -->
+                <div>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-emerald-800 pb-2">Farm Office</h4>
+                    <ul class="space-y-3 text-xs text-gray-300 mb-6">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-location-dot text-amber-400 mt-0.5"></i>
+                            <span>{{ company_address }}</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fa-solid fa-phone text-amber-400"></i>
+                            <span>{{ company_phone }}</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fa-solid fa-envelope text-amber-400"></i>
+                            <span>{{ company_email }}</span>
+                        </li>
+                    </ul>
+                    <div class="bg-emerald-900/60 p-3.5 rounded-xl border border-emerald-800">
+                        <span class="text-xs font-bold text-amber-400 block mb-1">Stay Updated</span>
+                        <p class="text-[11px] text-gray-400 mb-2">Subscribe for weekly fresh harvest discounts.</p>
+                        <form onsubmit="event.preventDefault(); alert('Thank you for subscribing to Gifric Farm news!');" class="flex">
+                            <input type="email" placeholder="Your email" required class="w-full text-xs px-3 py-2 bg-emerald-950 border border-emerald-800 rounded-l-lg text-white focus:outline-none">
+                            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-r-lg font-bold">Join</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Copyright -->
+            <div class="border-t border-emerald-900/60 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500">
+                <p>&copy; 2026 {{ company_name }}. All rights reserved. Premium Agricultural Poultry.</p>
+                <div class="flex space-x-6 mt-3 sm:mt-0">
+                    <span class="hover:text-gray-400">Privacy Policy</span>
+                    <span class="hover:text-gray-400">Terms of Supply</span>
+                    <span class="hover:text-gray-400">Quality Guarantee</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Chat Button -->
+    <a href="https://wa.me/263772239953?text=Hello%20Gifric%20Farm%2C%20I%20would%20like%20to%20inquire%20about%20your%20products." 
+       target="_blank"
+       class="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#1fb855] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 group"
+       title="Chat with us on WhatsApp">
+        <i class="fa-brands fa-whatsapp text-2xl"></i>
+        <span class="absolute right-16 bg-gray-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            Chat on WhatsApp
+        </span>
+    </a>
+
+</body>
+</html>

@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us & GPS Location - {{ company_name }}{% endblock %}
+
+{% block content %}
+
+<!-- Header Banner -->
+<div class="bg-emerald-900 text-white py-14 px-4 text-center">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-extrabold serif-font">Contact Gifric Farm</h1>
+        <p class="text-emerald-200 text-sm mt-2 max-w-xl mx-auto">
+            Located in Hatfield, Harare. Contact us for fresh chicken orders ($7/bird), bulk restaurant supplies, or visit our farm office.
+        </p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-14 space-y-16">
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        <!-- Left 5 cols: Contact Cards & GPS -->
+        <div class="lg:col-span-5 space-y-6">
+            
+            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+                <h3 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-3">Farm Address & Phone</h3>
+
+                <div class="space-y-4 text-xs">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0 text-base">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div>
+                            <strong class="block text-gray-900 font-bold mb-0.5">Physical Address:</strong>
+                            <span class="text-gray-700 font-semibold leading-relaxed">84 St Andrews Rd, Hatfield, Harare, Zimbabwe</span>
+                            <span class="block text-emerald-700 font-mono text-[11px] mt-1"><i class="fa-solid fa-compass mr-1"></i> GPS Coordinates: -17.8767, 31.0825</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center flex-shrink-0 text-base">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div>
+                            <strong class="block text-gray-900 font-bold mb-0.5">Phone / WhatsApp:</strong>
+                            <span class="text-gray-900 font-bold text-sm">+263 77 223 9953</span>
+                            <span class="block text-gray-400 text-[10px]">Mon - Sat: 7:00 AM - 6:00 PM</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0 text-base">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div>
+                            <strong class="block text-gray-900 font-bold mb-0.5">Email Support:</strong>
+                            <a href="mailto:{{ company_email }}" class="text-emerald-700 font-semibold hover:underline">{{ company_email }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WhatsApp Direct Card -->
+            <div class="bg-emerald-950 text-white p-6 rounded-3xl shadow-lg relative overflow-hidden">
+                <div class="flex items-center space-x-3 mb-2">
+                    <i class="fa-brands fa-whatsapp text-emerald-400 text-3xl"></i>
+                    <h4 class="font-bold text-base">WhatsApp Orders (+263 77 223 9953)</h4>
+                </div>
+                <p class="text-xs text-emerald-200 mb-4">Chat with us on WhatsApp to order fresh whole chicken at $7 per bird or schedule delivery in Harare.</p>
+                <a href="https://wa.me/263772239953?text=Hello%20Gifric%20Farm,%20I%20want%20to%20order%20fresh%20chicken" 
+                   target="_blank" 
+                   class="inline-block bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition">
+                    Chat on WhatsApp <i class="fa-solid fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Right 7 cols: Inquiry Form -->
+        <div class="lg:col-span-7">
+            <div class="bg-white p-6 sm:p-10 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900 serif-font">Send Us an Inquiry</h3>
+                    <p class="text-xs text-gray-500 mt-1">Order whole chicken ($7/bird), ask for bulk delivery, or leave us a message.</p>
+                </div>
+
+                <form action="{{ url_for('contact') }}" method="POST" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Your Name *</label>
+                            <input type="text" name="name" required placeholder="e.g. Blessing Chikore" 
+                                   class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Email Address *</label>
+                            <input type="email" name="email" required placeholder="blessing@example.com" 
+                                   class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Phone Number</label>
+                            <input type="tel" name="phone" placeholder="+263 77 223 9953" 
+                                   class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Inquiry Type</label>
+                            <select name="service_type" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                                <option value="general">General Inquiry</option>
+                                <option value="wholesale">Wholesale Chicken Supply ($7/bird)</option>
+                                <option value="feed">Poultry Feed & Supplies</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Subject</label>
+                        <input type="text" name="subject" placeholder="e.g. Order for 20 Whole Chickens" 
+                               class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Message *</label>
+                        <textarea name="message" required rows="4" placeholder="Specify quantity of whole chickens ($7/bird), delivery address in Harare, or special requirements..." 
+                                  class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white"></textarea>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button type="submit" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3.5 px-6 rounded-xl shadow transition text-sm">
+                            <i class="fa-solid fa-paper-plane mr-1.5"></i> Submit Inquiry
+                        </button>
+                        <button type="button" onclick="sendInquiryViaWhatsApp()" class="flex-1 bg-[#25D366] hover:bg-[#1fb855] text-white font-extrabold py-3.5 px-6 rounded-xl shadow transition text-sm">
+                            <i class="fa-brands fa-whatsapp mr-1.5 text-base"></i> Send via WhatsApp
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<script>
+function sendInquiryViaWhatsApp() {
+    const name = document.querySelector('input[name="name"]').value.trim();
+    const email = document.querySelector('input[name="email"]').value.trim();
+    const phone = document.querySelector('input[name="phone"]').value.trim();
+    const serviceType = document.querySelector('select[name="service_type"]');
+    const serviceLabel = serviceType.options[serviceType.selectedIndex].text;
+    const subject = document.querySelector('input[name="subject"]').value.trim();
+    const message = document.querySelector('textarea[name="message"]').value.trim();
+
+    if (!name || !message) {
+        alert('Please fill in at least your Name and Message before sending.');
+        return;
+    }
+
+    let waMsg = `*GIFRIC FARM INQUIRY*\n`;
+    waMsg += `━━━━━━━━━━━━━━━━━\n`;
+    waMsg += `*Name:* ${name}\n`;
+    if (email) waMsg += `*Email:* ${email}\n`;
+    if (phone) waMsg += `*Phone:* ${phone}\n`;
+    waMsg += `*Inquiry Type:* ${serviceLabel}\n`;
+    if (subject) waMsg += `*Subject:* ${subject}\n`;
+    waMsg += `━━━━━━━━━━━━━━━━━\n`;
+    waMsg += `*Message:*\n${message}\n`;
+    waMsg += `━━━━━━━━━━━━━━━━━\n`;
+    waMsg += `_Sent from Gifric Farm Website_`;
+
+    const waUrl = `https://wa.me/263772239953?text=${encodeURIComponent(waMsg)}`;
+    window.open(waUrl, '_blank');
+}
+</script>
+
+    </div>
+
+    <!-- Embedded GPS Map Section -->
+    <div class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-4">
+            <div>
+                <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Find Our Location</span>
+                <h3 class="text-xl font-bold text-gray-900 serif-font">GPS Location & Directions</h3>
+                <p class="text-xs text-gray-500">84 St Andrews Rd, Hatfield, Harare, Zimbabwe</p>
+            </div>
+            <a href="https://maps.google.com/?q=84+St+Andrews+Rd,+Hatfield,+Harare,+Zimbabwe" 
+               target="_blank" 
+               class="mt-3 sm:mt-0 inline-flex items-center text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 px-4 py-2.5 rounded-xl shadow transition">
+                <i class="fa-solid fa-diamond-turn-right mr-1.5"></i> Open in Google Maps
+            </a>
+        </div>
+
+        <!-- Google Maps Embed iFrame for 84 St Andrews Rd, Hatfield, Harare -->
+        <div class="w-full h-80 rounded-2xl overflow-hidden border border-gray-200 relative bg-gray-100 shadow-inner">
+            <iframe width="100%" height="100%" frameborder="0" style="border:0" 
+                    src="https://maps.google.com/maps?q=84+St+Andrews+Rd,+Hatfield,+Harare,+Zimbabwe&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                    allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <!-- FAQ Accordion Section -->
+    <div class="bg-white p-8 sm:p-12 rounded-3xl border border-gray-100 shadow-sm max-w-4xl mx-auto">
+        <h3 class="text-2xl font-extrabold text-gray-900 text-center serif-font mb-8">Frequently Asked Questions</h3>
+
+        <div class="space-y-4 text-xs">
+            <details class="group bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                <summary class="font-bold text-gray-900 text-sm cursor-pointer list-none flex justify-between items-center">
+                    <span>What is the price of a fresh whole chicken at Gifric Farm?</span>
+                    <span class="text-emerald-700 font-bold text-lg group-open:rotate-180 transition">+</span>
+                </summary>
+                <p class="text-gray-600 mt-3 leading-relaxed">
+                    Our fresh organic whole broiler chicken is priced at <strong>$7 per bird</strong> (dressed and blast-chilled, approx 2.0kg - 2.5kg).
+                </p>
+            </details>
+
+            <details class="group bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                <summary class="font-bold text-gray-900 text-sm cursor-pointer list-none flex justify-between items-center">
+                    <span>Do you offer delivery in Harare?</span>
+                    <span class="text-emerald-700 font-bold text-lg group-open:rotate-180 transition">+</span>
+                </summary>
+                <p class="text-gray-600 mt-3 leading-relaxed">
+                    Yes! We deliver across Hatfield, Harare, and surrounding residential or commercial areas. You can also pick up directly from our farm at 84 St Andrews Rd, Hatfield.
+                </p>
+            </details>
+
+            <details class="group bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                <summary class="font-bold text-gray-900 text-sm cursor-pointer list-none flex justify-between items-center">
+                    <span>How can I contact Gifric Farm directly?</span>
+                    <span class="text-emerald-700 font-bold text-lg group-open:rotate-180 transition">+</span>
+                </summary>
+                <p class="text-gray-600 mt-3 leading-relaxed">
+                    You can call or WhatsApp us on <strong>+263 77 223 9953</strong> or visit our office at 84 St Andrews Rd, Hatfield, Harare.
+                </p>
+            </details>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Wholesale & Bulk Chicken Supply - {{ company_name }}{% endblock %}
+
+{% block content %}
+
+<!-- Header Banner -->
+<div class="bg-emerald-900 text-white py-16 px-4 text-center">
+    <div class="max-w-7xl mx-auto">
+        <span class="text-xs font-bold uppercase tracking-widest text-amber-300 bg-emerald-800 px-3 py-1 rounded-full">Commercial & Agricultural Solutions</span>
+        <h1 class="text-3xl sm:text-5xl font-extrabold mt-3 serif-font">Wholesale Chicken & Feed Supply</h1>
+        <p class="text-emerald-200 text-sm mt-3 max-w-2xl mx-auto font-light">
+            Supplying supermarkets, hotels, restaurants, and caterers across Harare with fresh organic chicken ($7/bird) and balanced feed.
+        </p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-16 space-y-16">
+
+    <!-- 3 Main Services Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Service 1: Wholesale Supply -->
+        <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between space-y-6">
+            <div>
+                <div class="w-14 h-14 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center text-2xl mb-4">
+                    <i class="fa-solid fa-truck-field"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 serif-font mb-2">Wholesale Fresh Chicken ($7 / bird)</h3>
+                <p class="text-xs text-gray-600 leading-relaxed mb-4">
+                    We supply fresh whole broilers (2.0kg - 2.5kg) at $7 per bird, as well as skinless breast fillets, party wings, and drumsticks to restaurants and stores.
+                </p>
+                <ul class="space-y-2 text-xs text-gray-700">
+                    <li class="flex items-center"><i class="fa-solid fa-check text-emerald-600 mr-2"></i> Fixed $7/bird whole chicken pricing</li>
+                    <li class="flex items-center"><i class="fa-solid fa-check text-emerald-600 mr-2"></i> Guaranteed weekly volume contracts</li>
+                    <li class="flex items-center"><i class="fa-solid fa-check text-emerald-600 mr-2"></i> Direct delivery to Hatfield & Harare areas</li>
+                </ul>
+            </div>
+            <a href="{{ url_for('contact') }}" class="inline-block text-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-3 px-6 rounded-xl transition">
+                Request Wholesale Contract
+            </a>
+        </div>
+
+        <!-- Service 2: Feed Formulation -->
+        <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between space-y-6">
+            <div>
+                <div class="w-14 h-14 bg-amber-100 text-amber-800 rounded-2xl flex items-center justify-center text-2xl mb-4">
+                    <i class="fa-solid fa-wheat-awn"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 serif-font mb-2">Organic Poultry Feed & Nutrition</h3>
+                <p class="text-xs text-gray-600 leading-relaxed mb-4">
+                    Formulated by agricultural specialists, our organic feeds maximize growth efficiency and egg production without synthetic hormones.
+                </p>
+                <ul class="space-y-2 text-xs text-gray-700">
+                    <li class="flex items-center"><i class="fa-solid fa-check text-amber-600 mr-2"></i> Chick Starter Crumble (50kg Bag)</li>
+                    <li class="flex items-center"><i class="fa-solid fa-check text-amber-600 mr-2"></i> Broiler Finisher & Layer Feeds</li>
+                    <li class="flex items-center"><i class="fa-solid fa-check text-amber-600 mr-2"></i> High-protein organic formulation</li>
+                </ul>
+            </div>
+            <a href="{{ url_for('products', category='poultry-feed-supplies') }}" class="inline-block text-center bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs py-3 px-6 rounded-xl transition">
+                View Feed Catalog
+            </a>
+        </div>
+
+        <!-- Service 3: Farm Advisory -->
+        <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between space-y-6">
+            <div>
+                <div class="w-14 h-14 bg-sky-100 text-sky-800 rounded-2xl flex items-center justify-center text-2xl mb-4">
+                    <i class="fa-solid fa-user-doctor"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 serif-font mb-2">Livestock & Farm Advisory</h3>
+                <p class="text-xs text-gray-600 leading-relaxed mb-4">
+                    Professional advice for local poultry rearers in Harare on housing, biosecurity, feed conversion efficiency, and flock management.
+                </p>
+                <ul class="space-y-2 text-xs text-gray-700">
+                    <li class="flex items-center"><i class="fa-solid fa-check text-sky-600 mr-2"></i> Farm housing design & ventilation</li>
+                    <li class="flex items-center"><i class="fa-solid fa-check text-sky-600 mr-2"></i> Biosecurity & sanitation audits</li>
+                    <li class="flex items-center"><i class="fa-solid fa-check text-sky-600 mr-2"></i> Feed ratio optimization</li>
+                </ul>
+            </div>
+            <a href="{{ url_for('contact') }}" class="inline-block text-center bg-sky-700 hover:bg-sky-800 text-white font-bold text-xs py-3 px-6 rounded-xl transition">
+                Book Consultation
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

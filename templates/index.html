@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}Gifric Farm - Fresh Organic Chicken, Eggs & Day-Old Chicks{% endblock %}
+
+{% block content %}
+
+<!-- Hero Banner Section -->
+<section class="hero-gradient text-white py-20 lg:py-28 px-4 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <div class="lg:col-span-7 space-y-6">
+            <div class="inline-flex items-center space-x-2 bg-emerald-800/80 backdrop-blur border border-emerald-600/50 px-3.5 py-1.5 rounded-full text-xs font-bold text-amber-300">
+                <i class="fa-solid fa-wheat-awn"></i>
+                <span>{{ company_motto }}</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight serif-font">
+                Fresh, Organic & Healthy Chicken for Your Family
+            </h1>
+
+            <p class="text-emerald-100 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
+                At <strong class="text-amber-300 font-semibold">Gifric Farm</strong>, we carry on the trade & business of agricultural producers. Rearing free-range broilers and layers ($7/bird) on 100% natural organic grains in Hatfield, Harare.
+            </p>
+
+            <div class="pt-4 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                <a href="{{ url_for('products') }}" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold px-8 py-4 rounded-xl text-center shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-drumstick-bite mr-2"></i> Shop Fresh Chicken
+                </a>
+                <a href="{{ url_for('services') }}" class="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-xl text-center backdrop-blur transition">
+                    <i class="fa-solid fa-building-wheat mr-2"></i> Wholesale & Bulk Orders
+                </a>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="pt-8 border-t border-emerald-700/60 grid grid-cols-3 gap-4 text-xs font-medium text-emerald-200">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-amber-400 text-base"></i>
+                    <span>No Growth Hormones</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-amber-400 text-base"></i>
+                    <span>Halal Certified</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-amber-400 text-base"></i>
+                    <span>Same-Day Cold Delivery</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Card Floating Preview -->
+        <div class="lg:col-span-5 hidden lg:block">
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl shadow-2xl relative">
+                <div class="absolute -top-4 -right-4 bg-amber-500 text-slate-900 text-xs font-extrabold px-4 py-2 rounded-full shadow-lg border-2 border-white">
+                    ⭐ $7.00 Per Bird
+                </div>
+                <img src="https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=800&q=80" 
+                     alt="Gifric Whole Chicken" class="w-full h-72 object-cover rounded-2xl shadow-inner mb-4">
+                <div class="bg-emerald-950/80 p-4 rounded-xl backdrop-blur flex justify-between items-center text-white">
+                    <div>
+                        <h4 class="font-bold text-sm">Gifric Premium Whole Broiler</h4>
+                        <p class="text-xs text-emerald-300">Cleaned & Blast Chilled (2.0kg - 2.5kg)</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-lg font-black text-amber-400">$7.00</span>
+                        <span class="block text-[10px] text-gray-300">/ per bird</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Category Highlights -->
+<section class="py-16 px-4 max-w-7xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">Our Produce Categories</span>
+        <h2 class="text-3xl font-extrabold text-gray-900 mt-2 serif-font">What We Raise & Produce</h2>
+        <p class="text-sm text-gray-600 mt-2">From table-ready cuts to day-old hatchery chicks, explore our full spectrum of agricultural poultry products.</p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {% for cat in categories %}
+            <a href="{{ url_for('products', category=cat.slug) }}" class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm text-center farm-card group flex flex-col items-center justify-between">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-2xl mb-3 group-hover:bg-emerald-700 group-hover:text-white transition">
+                    {% if cat.slug == 'fresh-whole-chicken' %}
+                        <i class="fa-solid fa-drumstick-bite"></i>
+                    {% elif cat.slug == 'chicken-cuts-parts' %}
+                        <i class="fa-solid fa-utensils"></i>
+                    {% elif cat.slug == 'farm-fresh-eggs' %}
+                        <i class="fa-solid fa-egg"></i>
+                    {% elif cat.slug == 'day-old-chicks' %}
+                        <i class="fa-solid fa-crow"></i>
+                    {% elif cat.slug == 'smoked-processed' %}
+                        <i class="fa-solid fa-fire-burner"></i>
+                    {% else %}
+                        <i class="fa-solid fa-wheat-awn"></i>
+                    {% endif %}
+                </div>
+                <h3 class="text-xs font-bold text-gray-800 group-hover:text-emerald-700 transition leading-tight mb-1">{{ cat.name }}</h3>
+                <span class="text-[10px] text-gray-400 font-semibold">Explore <i class="fa-solid fa-arrow-right text-[8px] ml-0.5"></i></span>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="py-16 bg-emerald-50/60 border-y border-emerald-100 px-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Harvest Fresh</span>
+                <h2 class="text-3xl font-extrabold text-emerald-950 mt-1 serif-font">Featured Poultry Products</h2>
+            </div>
+            <a href="{{ url_for('products') }}" class="mt-4 md:mt-0 inline-flex items-center text-sm font-bold text-emerald-700 hover:text-emerald-900 transition">
+                View All Products <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for product in featured_products %}
+                <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm farm-card flex flex-col justify-between">
+                    <div>
+                        <!-- Product Image & Badges -->
+                        <div class="relative h-56 bg-gray-100 overflow-hidden">
+                            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            
+                            <div class="absolute top-3 left-3 flex flex-col space-y-1">
+                                {% if product.is_organic %}
+                                    <span class="bg-emerald-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                                        Organic
+                                    </span>
+                                {% endif %}
+                                {% if product.is_halal %}
+                                    <span class="bg-amber-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                                        Halal
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <a href="{{ url_for('product_detail', slug=product.slug) }}" class="absolute inset-0"></a>
+                        </div>
+
+                        <!-- Product Information -->
+                        <div class="p-6">
+                            <span class="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">{{ product.category_name }}</span>
+                            <h3 class="text-lg font-bold text-gray-900 mt-1 mb-2 hover:text-emerald-700 transition">
+                                <a href="{{ url_for('product_detail', slug=product.slug) }}">{{ product.name }}</a>
+                            </h3>
+                            <p class="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-4">
+                                {{ product.short_description or product.description }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Product Footer: Price & Add to Cart -->
+                    <div class="px-6 pb-6 pt-2 border-t border-gray-50 flex items-center justify-between">
+                        <div>
+                            <span class="text-2xl font-extrabold text-emerald-900">${{ "%.2f"|format(product.price) }}</span>
+                            <span class="text-xs text-gray-400 block font-normal">/ {{ product.unit }}</span>
+                        </div>
+                        <button onclick='gifricCart.addItem({{ product.to_dict()|tojson }})' 
+                                class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center space-x-1.5 shadow">
+                            <i class="fa-solid fa-cart-plus"></i>
+                            <span>Add to Cart</span>
+                        </button>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Farm Standards & Philosophy Section -->
+<section class="py-20 px-4 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        
+        <!-- Left Image Composition -->
+        <div class="relative">
+            <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=1000&q=80" 
+                 alt="Gifric Free-Range Farm" class="rounded-3xl shadow-xl w-full h-[450px] object-cover">
+            
+            <div class="absolute -bottom-6 -right-6 bg-emerald-900 text-white p-6 rounded-2xl shadow-2xl max-w-xs hidden sm:block border-4 border-white">
+                <div class="flex items-center space-x-3 mb-2">
+                    <i class="fa-solid fa-shield-halved text-amber-400 text-2xl"></i>
+                    <span class="font-bold text-sm">Quality Guaranteed</span>
+                </div>
+                <p class="text-xs text-emerald-200">Every bird is inspected by certified veterinary officer before processing.</p>
+            </div>
+        </div>
+
+        <!-- Right Text Details -->
+        <div class="space-y-6">
+            <span class="text-xs font-bold uppercase tracking-widest text-amber-600 bg-amber-50 px-3 py-1 rounded-full">Our Farm Standards</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 serif-font">Why Families & Restaurants Choose Gifric Farm</h2>
+            <p class="text-sm text-gray-600 leading-relaxed">
+                We believe great nutrition starts with ethical farming. At Gifric Farm, our poultry roam in clean open environments with access to fresh air, natural sunlight, and clean spring water.
+            </p>
+
+            <div class="space-y-4 pt-2">
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0 text-lg">
+                        <i class="fa-solid fa-wheat-awn"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-900">100% Organic Grain Diet</h4>
+                        <p class="text-xs text-gray-500">Free from synthetic growth boosters, antibiotics, or animal by-products.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0 text-lg">
+                        <i class="fa-solid fa-snowflake"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-900">Hygienic Cold-Chain Processing</h4>
+                        <p class="text-xs text-gray-500">Blast-chilled immediately after dressing to preserve peak natural flavor and tenderness.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0 text-lg">
+                        <i class="fa-solid fa-truck-ramp-box"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-900">Wholesale & Commercial Hatchery</h4>
+                        <p class="text-xs text-gray-500">Bulk chicken supply for hotels, caterers, and vaccinated day-old chicks for farmers.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <a href="{{ url_for('about') }}" class="inline-flex items-center text-sm font-bold text-emerald-800 hover:text-emerald-900">
+                    Learn More About Our Farm <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Stats Counter Banner -->
+<section class="bg-emerald-900 text-white py-14 px-4 my-10">
+    <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div>
+            <span class="text-3xl sm:text-4xl font-black text-amber-400 serif-font">15,000+</span>
+            <span class="block text-xs font-semibold text-emerald-200 mt-1 uppercase tracking-wider">Satisfied Customers</span>
+        </div>
+        <div>
+            <span class="text-3xl sm:text-4xl font-black text-amber-400 serif-font">100%</span>
+            <span class="block text-xs font-semibold text-emerald-200 mt-1 uppercase tracking-wider">Natural Organic Feed</span>
+        </div>
+        <div>
+            <span class="text-3xl sm:text-4xl font-black text-amber-400 serif-font">100k+</span>
+            <span class="block text-xs font-semibold text-emerald-200 mt-1 uppercase tracking-wider">Eggs Harvested Monthly</span>
+        </div>
+        <div>
+            <span class="text-3xl sm:text-4xl font-black text-amber-400 serif-font">24h</span>
+            <span class="block text-xs font-semibold text-emerald-200 mt-1 uppercase tracking-wider">Fresh Farm Delivery</span>
+        </div>
+    </div>
+</section>
+
+<!-- Wholesale Banner CTA -->
+<section class="py-16 px-4 max-w-7xl mx-auto">
+    <div class="bg-gradient-to-r from-amber-600 to-amber-700 rounded-3xl p-8 sm:p-12 text-white shadow-xl flex flex-col lg:flex-row justify-between items-center relative overflow-hidden">
+        <div class="space-y-3 max-w-xl mb-6 lg:mb-0 z-10">
+            <span class="text-xs font-extrabold uppercase tracking-widest bg-black/20 px-3 py-1 rounded-full">For Commercial Poultry & Farmers</span>
+            <h3 class="text-3xl font-extrabold serif-font">Need Bulk Chicken or Day-Old Chicks?</h3>
+            <p class="text-sm text-amber-100 leading-relaxed">
+                We partner with supermarkets, hotels, restaurants, and poultry farmers. Enjoy special wholesale pricing, scheduled deliveries, and hatchery reservations.
+            </p>
+        </div>
+        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 z-10 w-full lg:w-auto">
+            <a href="{{ url_for('contact') }}" class="bg-emerald-900 hover:bg-emerald-950 text-white font-extrabold px-6 py-3.5 rounded-xl text-center text-sm shadow transition">
+                Request Wholesale Quote
+            </a>
+            <a href="{{ url_for('services') }}" class="bg-white text-amber-900 hover:bg-amber-50 font-extrabold px-6 py-3.5 rounded-xl text-center text-sm shadow transition">
+                Hatchery Details
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

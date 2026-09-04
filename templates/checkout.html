@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - {{ company_name }}{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-8 serif-font text-center">Complete Your Fresh Delivery Order</h1>
+
+    <form action="{{ url_for('checkout') }}" method="POST" id="checkout-form" class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <input type="hidden" name="cart_data" id="cart_data_input">
+
+        <!-- Left 7 cols: Delivery & Customer Details -->
+        <div class="lg:col-span-7 space-y-6">
+            
+            <!-- Customer Information Card -->
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">1</div>
+                    <h3 class="text-lg font-bold text-gray-900">Customer & Delivery Information</h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Full Name *</label>
+                        <input type="text" name="customer_name" required placeholder="e.g. Tendai Chikore" 
+                               class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Email Address *</label>
+                        <input type="email" name="email" required placeholder="tendai@example.com" 
+                               class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Phone / WhatsApp *</label>
+                        <input type="tel" name="phone" required placeholder="e.g. +263 77 123 4567" 
+                               class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">City / Region *</label>
+                        <input type="text" name="city" required placeholder="e.g. Harare, Hatfield" 
+                               class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Full Delivery Street Address *</label>
+                    <textarea name="delivery_address" required rows="3" placeholder="House number, street name, apartment or commercial store details..." 
+                              class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Special Delivery Instructions / Notes</label>
+                    <input type="text" name="notes" placeholder="e.g. Please deliver before noon or call upon arrival..." 
+                           class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                </div>
+            </div>
+
+            <!-- Payment Method Card -->
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">2</div>
+                    <h3 class="text-lg font-bold text-gray-900">Select Payment Method</h3>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="flex items-start p-4 bg-gray-50 border border-gray-200 rounded-2xl cursor-pointer hover:border-emerald-500 transition">
+                        <input type="radio" name="payment_method" value="cash" checked class="mt-1 text-emerald-600 focus:ring-emerald-500">
+                        <div class="ml-3">
+                            <span class="text-sm font-bold text-gray-900 block"><i class="fa-solid fa-money-bill-wave text-emerald-700 mr-1.5"></i> Cash on Delivery (COD)</span>
+                            <span class="text-xs text-gray-500">Pay cash upon delivery or pick up at 84 St Andrews Rd, Hatfield, Harare.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start p-4 bg-emerald-50/80 border-2 border-emerald-400 rounded-2xl cursor-pointer hover:border-emerald-600 transition shadow-sm">
+                        <input type="radio" name="payment_method" value="ecocash" class="mt-1 text-emerald-600 focus:ring-emerald-500">
+                        <div class="ml-3 space-y-1">
+                            <span class="text-sm font-bold text-emerald-950 block flex items-center">
+                                <i class="fa-solid fa-mobile-screen-button text-emerald-700 mr-2 text-base"></i> EcoCash Mobile Payment
+                            </span>
+                            <div class="bg-emerald-900 text-white font-mono text-xs px-3 py-1.5 rounded-lg inline-block font-extrabold shadow-inner">
+                                Send to EcoCash: <span class="text-amber-300 font-bold">+263 77 223 9953</span> (Nyasha Florance Murau)
+                            </div>
+                            <span class="text-[11px] text-emerald-800 block">Instant order confirmation & payment reference instructions on receipt.</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right 5 cols: Order Summary -->
+        <div class="lg:col-span-5">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-sm sticky top-28 space-y-6">
+                <h3 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-3">Order Summary</h3>
+
+                <div id="checkout-items-list" class="space-y-3 max-h-72 overflow-y-auto pr-1">
+                    <!-- Loaded dynamically by main.js -->
+                </div>
+
+                <div class="border-t border-gray-100 pt-4 space-y-2 text-xs">
+                    <div class="flex justify-between text-gray-600">
+                        <span>Items Subtotal</span>
+                        <span id="checkout-total-price" class="font-bold text-gray-900">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Cold Delivery Fee</span>
+                        <span class="font-bold text-emerald-700">FREE</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Freshness Guarantee</span>
+                        <span class="font-bold text-emerald-700">Included</span>
+                    </div>
+                    <div class="border-t border-gray-100 pt-3 flex justify-between text-base font-extrabold text-emerald-950">
+                        <span>Total Due</span>
+                        <span id="checkout-total-due" class="text-xl">$0.00</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2 text-sm">
+                    <i class="fa-solid fa-circle-check text-lg"></i>
+                    <span>Confirm & Place Order</span>
+                </button>
+
+                <p class="text-[11px] text-gray-400 text-center">
+                    <i class="fa-solid fa-lock text-emerald-600 mr-1"></i> Your details are safe with Gifric Farm Agri-Estate.
+                </p>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        gifricCart.renderCheckoutSummary();
+        const totalText = document.getElementById('checkout-total-price').textContent;
+        document.getElementById('checkout-total-due').textContent = totalText;
+
+        document.getElementById('checkout-form').addEventListener('submit', (e) => {
+            if (gifricCart.cart.length === 0) {
+                e.preventDefault();
+                alert('Your cart is empty. Please add products before placing an order.');
+            } else {
+                // Clear localstorage after submitting form
+                setTimeout(() => {
+                    gifricCart.clearCart();
+                }, 500);
+            }
+        });
+    });
+</script>
+
+{% endblock %}

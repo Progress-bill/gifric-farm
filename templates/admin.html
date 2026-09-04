@@ -1,0 +1,504 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Control Panel - Stock & Orders - {{ company_name }}{% endblock %}
+
+{% block content %}
+
+<!-- Admin Header -->
+<div class="bg-slate-900 text-white py-10 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+        <div>
+            <div class="flex items-center space-x-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Gifric Farm Admin Dashboard</span>
+                <span class="bg-emerald-800 text-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full"><i class="fa-solid fa-user-check mr-1"></i> {{ current_admin.username if current_admin else 'Admin' }}</span>
+            </div>
+            <h1 class="text-3xl font-extrabold mt-1 serif-font">Stock & Store Administration</h1>
+        </div>
+        <div class="mt-4 md:mt-0 flex items-center space-x-3 text-xs">
+            <a href="{{ url_for('admin_add_product') }}" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2 rounded-xl font-bold transition flex items-center shadow">
+                <i class="fa-solid fa-plus mr-1.5"></i> Add New Product
+            </a>
+            <a href="{{ url_for('products') }}" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-xl font-semibold transition">
+                <i class="fa-solid fa-store mr-1"></i> Live Store
+            </a>
+            <a href="{{ url_for('admin_logout') }}" class="bg-red-900/80 hover:bg-red-800 text-white px-3.5 py-2 rounded-xl font-semibold transition">
+                <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-10 space-y-10">
+
+    <!-- KPI Summary Metrics Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block">Customer Orders</span>
+                <span class="text-2xl font-black text-gray-900 mt-1 block">{{ orders|length }}</span>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg font-bold">
+                <i class="fa-solid fa-receipt"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block">Gross Sales</span>
+                <span class="text-2xl font-black text-emerald-950 mt-1 block">${{ "%.2f"|format(total_sales) }}</span>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-lg font-bold">
+                <i class="fa-solid fa-sack-dollar"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block">Farm Products</span>
+                <span class="text-2xl font-black text-gray-900 mt-1 block">{{ products_count }}</span>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center text-lg font-bold">
+                <i class="fa-solid fa-seedling"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block">Produce Categories</span>
+                <span class="text-2xl font-black text-purple-900 mt-1 block">{{ categories_count }}</span>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center text-lg font-bold">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block">Inquiries</span>
+                <span class="text-2xl font-black text-gray-900 mt-1 block">{{ inquiries|length }}</span>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center text-lg font-bold">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Balance, Profit / Loss & Excel Report Generator Card -->
+    <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-700/60 pb-6">
+            <div>
+                <div class="flex items-center space-x-2">
+                    <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border border-emerald-500/30">
+                        <i class="fa-solid fa-file-excel mr-1"></i> Admin Financial Records
+                    </span>
+                    <span class="text-xs text-slate-400">Up-to-Date Accounting</span>
+                </div>
+                <h2 class="text-2xl font-black mt-1 serif-font">Financial Balance, Order Flow & Profit / Loss Statement</h2>
+                <p class="text-xs text-slate-300 mt-1">Export official multi-sheet Excel workbooks (.xlsx) and CSV reports for administrative checking, audits, and business records.</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <a href="{{ url_for('admin_export_excel') }}" class="bg-[#25D366] hover:bg-[#1fb855] text-slate-950 font-extrabold text-xs px-5 py-3 rounded-xl shadow-lg transition flex items-center">
+                    <i class="fa-solid fa-file-excel mr-2 text-sm"></i> Download Excel (.xlsx)
+                </a>
+                <a href="{{ url_for('admin_export_csv') }}" class="bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs px-4 py-3 rounded-xl transition flex items-center">
+                    <i class="fa-solid fa-file-csv mr-2"></i> CSV
+                </a>
+            </div>
+        </div>
+
+        <!-- Financial Statement Snapshot Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div class="bg-white/5 border border-white/10 p-4 rounded-2xl">
+                <span class="text-[11px] text-slate-400 block uppercase font-semibold">Gross Sales Balance</span>
+                <span class="text-xl font-black text-amber-400 mt-1 block">${{ "%.2f"|format(total_sales) }}</span>
+                <span class="text-[10px] text-slate-400">From all non-cancelled orders</span>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 p-4 rounded-2xl">
+                <span class="text-[11px] text-slate-400 block uppercase font-semibold">Est. Production Cost (55%)</span>
+                <span class="text-xl font-black text-slate-300 mt-1 block">${{ "%.2f"|format(cogs_est) }}</span>
+                <span class="text-[10px] text-slate-400">Cost of Goods / Feeds / Produce</span>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 p-4 rounded-2xl">
+                <span class="text-[11px] text-slate-400 block uppercase font-semibold">Operating Expenses (10%)</span>
+                <span class="text-xl font-black text-slate-300 mt-1 block">${{ "%.2f"|format(expenses_est) }}</span>
+                <span class="text-[10px] text-slate-400">Packaging & Cold Logistics</span>
+            </div>
+
+            <div class="bg-emerald-950/60 border-2 {% if net_profit >= 0 %}border-emerald-500/80 bg-emerald-900/30{% else %}border-red-500/80 bg-red-900/30{% endif %} p-4 rounded-2xl">
+                <span class="text-[11px] text-slate-300 block uppercase font-bold flex items-center justify-between">
+                    Net Profit / Loss
+                    <span class="{% if net_profit >= 0 %}bg-emerald-500 text-slate-950{% else %}bg-red-500 text-white{% endif %} text-[9px] font-black px-1.5 py-0.5 rounded">
+                        {% if net_profit >= 0 %}SURPLUS{% else %}DEFICIT{% endif %}
+                    </span>
+                </span>
+                <span class="text-xl font-black {% if net_profit >= 0 %}text-emerald-300{% else %}text-red-300{% endif %} mt-1 block">
+                    ${{ "%.2f"|format(net_profit) }}
+                </span>
+                <span class="text-[10px] text-slate-300">
+                    {% if total_sales > 0 %}{{ "%.1f"|format(net_profit / total_sales * 100) }}% Net Margin{% else %}0% Margin{% endif %}
+                </span>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 p-4 rounded-2xl">
+                <span class="text-[11px] text-slate-400 block uppercase font-semibold">Unsold Inventory Valuation</span>
+                <span class="text-xl font-black text-sky-400 mt-1 block">${{ "%.2f"|format(inventory_val) }}</span>
+                <span class="text-[10px] text-slate-400">Retail value of farm stock</span>
+            </div>
+        </div>
+
+        <!-- Custom Record Checking & Excel Filtering Options -->
+        <div class="bg-black/30 p-5 rounded-2xl border border-white/10">
+            <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3 flex items-center">
+                <i class="fa-solid fa-sliders text-emerald-400 mr-2"></i> Custom Date & Profit Margin Criteria for Excel Download
+            </h4>
+            <form action="{{ url_for('admin_export_excel') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+                <div>
+                    <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">From Date</label>
+                    <input type="date" name="start_date" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">To Date</label>
+                    <input type="date" name="end_date" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">Order Status</label>
+                    <select name="status" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="all">All Orders</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">Cost of Production (COGS %)</label>
+                    <select name="cost_ratio" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="0.40">40% Cost (60% Gross Margin)</option>
+                        <option value="0.50">50% Cost (50% Gross Margin)</option>
+                        <option value="0.55" selected>55% Cost (Standard Agricultural)</option>
+                        <option value="0.60">60% Cost (40% Gross Margin)</option>
+                        <option value="0.70">70% Cost (30% Gross Margin)</option>
+                    </select>
+                </div>
+
+                <div class="flex space-x-2">
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs py-2.5 px-3 rounded-xl transition flex items-center justify-center">
+                        <i class="fa-solid fa-file-excel mr-1.5"></i> Export Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product & Stock Inventory Management Table -->
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                    <i class="fa-solid fa-boxes-stacked text-emerald-700 mr-2"></i> Stock Inventory & Product Catalog
+                </h3>
+                <p class="text-xs text-gray-500">Stock updates automatically when orders are placed. Admins can edit products & adjust stock levels.</p>
+            </div>
+            <a href="{{ url_for('admin_add_product') }}" class="bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow transition flex items-center">
+                <i class="fa-solid fa-plus mr-1.5"></i> Add New Product
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-gray-600">
+                <thead class="bg-slate-50 text-gray-700 uppercase font-bold border-b border-gray-100">
+                    <tr>
+                        <th class="p-4">Product Details</th>
+                        <th class="p-4">Category</th>
+                        <th class="p-4">Price</th>
+                        <th class="p-4">Available Stock</th>
+                        <th class="p-4">Status</th>
+                        <th class="p-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for p in products %}
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="p-4 flex items-center space-x-3">
+                                <img src="{{ p.image_url }}" alt="{{ p.name }}" class="w-12 h-12 object-cover rounded-xl flex-shrink-0 border border-gray-100">
+                                <div>
+                                    <span class="font-bold text-gray-900 block text-xs">{{ p.name }}</span>
+                                    <span class="text-gray-400 block text-[10px]">Slug: {{ p.slug }}</span>
+                                </div>
+                            </td>
+                            <td class="p-4 font-semibold text-emerald-800">{{ p.category_name }}</td>
+                            <td class="p-4 font-extrabold text-gray-900">${{ "%.2f"|format(p.price) }} <span class="text-gray-400 text-[10px] font-normal">/ {{ p.unit }}</span></td>
+                            <td class="p-4 font-mono font-bold text-sm {% if p.stock_quantity <= 10 %}text-red-600{% else %}text-emerald-900{% endif %}">
+                                {{ p.stock_quantity }} units
+                            </td>
+                            <td class="p-4">
+                                {% if p.stock_quantity > 0 %}
+                                    <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase">In Stock</span>
+                                {% else %}
+                                    <span class="bg-red-100 text-red-800 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase">Out of Stock</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4 text-right space-x-2">
+                                <a href="{{ url_for('admin_edit_product', product_id=p.id) }}" 
+                                   class="inline-flex items-center text-xs font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition">
+                                    <i class="fa-solid fa-pen-to-square mr-1"></i> Edit / Stock
+                                </a>
+                                <form action="{{ url_for('admin_delete_product', product_id=p.id) }}" method="POST" class="inline" 
+                                      onsubmit="return confirm('Are you sure you want to delete {{ p.name }}?');">
+                                    <button type="submit" class="inline-flex items-center text-xs font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-lg transition">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="p-8 text-center text-gray-400">No products found in database. Click "Add New Product" to create one.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Farm Produce Categories Management Section -->
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                    <i class="fa-solid fa-layer-group text-purple-700 mr-2"></i> Farm Produce Categories
+                </h3>
+                <p class="text-xs text-gray-500">Organize your store into vegetables, mushrooms, poultry, eggs, and general agricultural produce. Add or delete categories as needed.</p>
+            </div>
+        </div>
+
+        <div class="p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left 7 cols: Category List Table -->
+            <div class="lg:col-span-7">
+                <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Current Categories ({{ categories|length }})</h4>
+                <div class="overflow-x-auto border border-gray-100 rounded-2xl">
+                    <table class="w-full text-left text-xs text-gray-600">
+                        <thead class="bg-slate-50 text-gray-700 uppercase font-bold border-b border-gray-100">
+                            <tr>
+                                <th class="p-3.5">Category Name</th>
+                                <th class="p-3.5">Slug</th>
+                                <th class="p-3.5 text-center">Products</th>
+                                <th class="p-3.5 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for cat in categories %}
+                                <tr class="hover:bg-slate-50/80 transition">
+                                    <td class="p-3.5 font-bold text-gray-900">
+                                        {{ cat.name }}
+                                        {% if cat.description %}
+                                            <span class="block text-[10px] text-gray-400 font-normal line-clamp-1">{{ cat.description }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="p-3.5 font-mono text-[11px] text-gray-500">{{ cat.slug }}</td>
+                                    <td class="p-3.5 text-center">
+                                        <span class="bg-emerald-50 text-emerald-800 font-bold px-2 py-0.5 rounded-full text-[11px]">
+                                            {{ cat.products|length }}
+                                        </span>
+                                    </td>
+                                    <td class="p-3.5 text-right">
+                                        <form action="{{ url_for('admin_delete_category', category_id=cat.id) }}" method="POST" class="inline"
+                                              onsubmit="return confirm('Delete category {{ cat.name }}?');">
+                                            <button type="submit" 
+                                                    class="inline-flex items-center text-xs font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 p-1.5 rounded-lg transition"
+                                                    title="Delete Category">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="p-4 text-center text-gray-400">No categories found.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right 5 cols: Add Category Form -->
+            <div class="lg:col-span-5 bg-slate-50 p-5 rounded-2xl border border-gray-100">
+                <h4 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2 flex items-center">
+                    <i class="fa-solid fa-plus-circle text-purple-700 mr-1.5"></i> Add New Farm Category
+                </h4>
+                <p class="text-[11px] text-gray-500 mb-4">Create a category to classify vegetables, mushrooms, greens, or any agricultural items.</p>
+
+                <form action="{{ url_for('admin_add_category') }}" method="POST" class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Category Name *</label>
+                        <input type="text" name="name" required placeholder="e.g. Fresh Vegetables & Greens, Gourmet Mushrooms" 
+                               class="w-full text-xs bg-white border border-gray-200 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-purple-600">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Short Description (Optional)</label>
+                        <textarea name="description" rows="2" placeholder="e.g. Crisp vegetables harvested daily from Gifric Farm..." 
+                                  class="w-full text-xs bg-white border border-gray-200 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-extrabold text-xs py-2.5 px-4 rounded-xl shadow transition flex items-center justify-center">
+                        <i class="fa-solid fa-plus mr-1.5"></i> Save Farm Category
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Management Section -->
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                <i class="fa-solid fa-receipt text-emerald-700 mr-2"></i> Recent Customer Orders
+            </h3>
+            <span class="text-xs text-gray-400 font-medium">Auto-updated</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-gray-600">
+                <thead class="bg-slate-50 text-gray-700 uppercase font-bold border-b border-gray-100">
+                    <tr>
+                        <th class="p-4">Order Code</th>
+                        <th class="p-4">Customer Details</th>
+                        <th class="p-4">Items Ordered</th>
+                        <th class="p-4">Total</th>
+                        <th class="p-4">Payment</th>
+                        <th class="p-4">Order Status</th>
+                        <th class="p-4">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for order in orders %}
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="p-4 font-mono font-bold text-emerald-900">{{ order.order_number }}</td>
+                            <td class="p-4">
+                                <span class="font-bold text-gray-900 block">{{ order.customer_name }}</span>
+                                <span class="text-gray-400 block text-[11px]">{{ order.phone }} | {{ order.city }}</span>
+                                <span class="text-gray-400 block text-[10px] truncate max-w-xs">{{ order.delivery_address }}</span>
+                            </td>
+                            <td class="p-4">
+                                <ul class="space-y-1">
+                                    {% for item in order.items %}
+                                        <li class="font-medium text-gray-800">
+                                            <span class="font-bold text-emerald-800">{{ item.quantity }}x</span> {{ item.product_name }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td class="p-4 font-extrabold text-sm text-gray-900">${{ "%.2f"|format(order.total_amount) }}</td>
+                            <td class="p-4 uppercase font-bold text-[11px] text-gray-600">
+                                <span class="px-2 py-1 rounded bg-gray-100 border border-gray-200">{{ order.payment_method.replace('_', ' ') }}</span>
+                            </td>
+                            <td class="p-4">
+                                <select onchange="updateOrderStatus({{ order.id }}, this.value)" 
+                                        class="text-xs font-bold rounded-lg p-1.5 border border-gray-300 focus:outline-none {% if order.status == 'Confirmed' %}bg-emerald-50 text-emerald-800{% elif order.status == 'Delivered' %}bg-sky-50 text-sky-800{% elif order.status == 'Cancelled' %}bg-red-50 text-red-800{% else %}bg-amber-50 text-amber-800{% endif %}">
+                                    <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                    <option value="Confirmed" {% if order.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                                    <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                    <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                            </td>
+                            <td class="p-4 text-gray-400 text-[11px]">{{ order.created_at.strftime('%m-%d %H:%M') }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="p-8 text-center text-gray-400">No customer orders recorded yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Wholesale & Customer Inquiries Table -->
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                <i class="fa-solid fa-envelope-open-text text-amber-600 mr-2"></i> Commercial & Customer Inquiries
+            </h3>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-gray-600">
+                <thead class="bg-slate-50 text-gray-700 uppercase font-bold border-b border-gray-100">
+                    <tr>
+                        <th class="p-4">Sender</th>
+                        <th class="p-4">Type</th>
+                        <th class="p-4">Subject & Message</th>
+                        <th class="p-4">Status</th>
+                        <th class="p-4">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for inq in inquiries %}
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="p-4">
+                                <strong class="text-gray-900 block font-bold">{{ inq.name }}</strong>
+                                <span class="text-gray-400 block text-[11px]">{{ inq.email }}</span>
+                                <span class="text-gray-400 block text-[11px]">{{ inq.phone or 'N/A' }}</span>
+                            </td>
+                            <td class="p-4 font-bold text-[10px] uppercase text-emerald-800">
+                                <span class="bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">{{ inq.service_type }}</span>
+                            </td>
+                            <td class="p-4 max-w-sm">
+                                <strong class="text-gray-900 block font-bold text-xs mb-0.5">{{ inq.subject }}</strong>
+                                <p class="text-gray-600 leading-relaxed text-[11px] line-clamp-2">{{ inq.message }}</p>
+                            </td>
+                            <td class="p-4">
+                                <select onchange="updateInquiryStatus({{ inq.id }}, this.value)" 
+                                        class="text-xs font-bold rounded-lg p-1.5 border border-gray-300 focus:outline-none {% if inq.status == 'Responded' %}bg-emerald-50 text-emerald-800{% else %}bg-amber-50 text-amber-800{% endif %}">
+                                    <option value="Unread" {% if inq.status == 'Unread' %}selected{% endif %}>Unread</option>
+                                    <option value="Responded" {% if inq.status == 'Responded' %}selected{% endif %}>Responded</option>
+                                </select>
+                            </td>
+                            <td class="p-4 text-gray-400 text-[11px]">{{ inq.created_at.strftime('%m-%d %H:%M') }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-gray-400">No inquiries received yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function updateOrderStatus(orderId, status) {
+        fetch('/api/order/status', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({order_id: orderId, status: status})
+        }).then(res => res.json()).then(data => {
+            if(data.success) {
+                gifricCart.showToast(`Order status updated to ${status}`);
+            }
+        });
+    }
+
+    function updateInquiryStatus(inquiryId, status) {
+        fetch('/api/inquiry/status', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({inquiry_id: inquiryId, status: status})
+        }).then(res => res.json()).then(data => {
+            if(data.success) {
+                gifricCart.showToast(`Inquiry marked as ${status}`);
+            }
+        });
+    }
+</script>
+
+{% endblock %}
