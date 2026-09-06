@@ -305,22 +305,46 @@ def admin():
                            net_profit=net_profit,
                            inventory_val=inventory_val)
 
-# Admin Financial & Order History Excel / CSV Exporter
+def parse_custom_cost_ratio(req_data, default=0.55):
+    cost_percentage = req_data.get('cost_percentage')
+    cost_value = req_data.get('cost_value')
+    raw_cost_ratio = req_data.get('cost_ratio')
+    
+    if cost_percentage:
+        try:
+            val = float(cost_percentage)
+            return max(0.0, val / 100.0 if val > 1.0 else val)
+        except (ValueError, TypeError):
+            pass
+    if cost_value:
+        try:
+            val = float(cost_value)
+            orders_all = Order.query.filter(Order.status != 'Cancelled').all()
+            tot = sum(o.total_amount for o in orders_all)
+            if tot > 0:
+                return max(0.0, val / tot)
+        except (ValueError, TypeError):
+            pass
+    if raw_cost_ratio:
+        try:
+            val = float(raw_cost_ratio)
+            return max(0.0, val / 100.0 if val > 1.0 else val)
+        except (ValueError, TypeError):
+            pass
+    return default
 
 @app.route('/admin/export/excel', methods=['GET', 'POST'])
 @admin_required
 def admin_export_excel():
-    start_date = request.args.get('start_date') or request.form.get('start_date')
-    end_date = request.args.get('end_date') or request.form.get('end_date')
-    status_filter = request.args.get('status') or request.form.get('status')
+    req_data = request.form if request.method == 'POST' else request.args
+    start_date = req_data.get('start_date')
+    end_date = req_data.get('end_date')
+    status_filter = req_data.get('status')
     
-    try:
-        cost_ratio = float(request.args.get('cost_ratio') or request.form.get('cost_ratio') or 0.55)
-    except (ValueError, TypeError):
-        cost_ratio = 0.55
+    cost_ratio = parse_custom_cost_ratio(req_data, default=0.55)
 
     try:
-        expense_ratio = float(request.args.get('expense_ratio') or request.form.get('expense_ratio') or 0.10)
+        expense_ratio = float(req_data.get('expense_ratio') or 0.10)
     except (ValueError, TypeError):
         expense_ratio = 0.10
     
@@ -365,13 +389,11 @@ def admin_export_excel():
 @app.route('/admin/export/csv', methods=['GET', 'POST'])
 @admin_required
 def admin_export_csv():
-    try:
-        cost_ratio = float(request.args.get('cost_ratio') or request.form.get('cost_ratio') or 0.55)
-    except (ValueError, TypeError):
-        cost_ratio = 0.55
+    req_data = request.form if request.method == 'POST' else request.args
+    cost_ratio = parse_custom_cost_ratio(req_data, default=0.55)
 
     try:
-        expense_ratio = float(request.args.get('expense_ratio') or request.form.get('expense_ratio') or 0.10)
+        expense_ratio = float(req_data.get('expense_ratio') or 0.10)
     except (ValueError, TypeError):
         expense_ratio = 0.10
     

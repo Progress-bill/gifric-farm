@@ -97,10 +97,10 @@
                 <p class="text-xs text-slate-300 mt-1">Export official multi-sheet Excel workbooks (.xlsx) and CSV reports for administrative checking, audits, and business records.</p>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="{{ url_for('admin_export_excel') }}" class="bg-[#25D366] hover:bg-[#1fb855] text-slate-950 font-extrabold text-xs px-5 py-3 rounded-xl shadow-lg transition flex items-center">
+                <a id="btnTopExportExcel" href="{{ url_for('admin_export_excel') }}" class="bg-[#25D366] hover:bg-[#1fb855] text-slate-950 font-extrabold text-xs px-5 py-3 rounded-xl shadow-lg transition flex items-center">
                     <i class="fa-solid fa-file-excel mr-2 text-sm"></i> Download Excel (.xlsx)
                 </a>
-                <a href="{{ url_for('admin_export_csv') }}" class="bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs px-4 py-3 rounded-xl transition flex items-center">
+                <a id="btnTopExportCsv" href="{{ url_for('admin_export_csv') }}" class="bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs px-4 py-3 rounded-xl transition flex items-center">
                     <i class="fa-solid fa-file-csv mr-2"></i> CSV
                 </a>
             </div>
@@ -110,33 +110,35 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             <div class="bg-white/5 border border-white/10 p-4 rounded-2xl">
                 <span class="text-[11px] text-slate-400 block uppercase font-semibold">Gross Sales Balance</span>
-                <span class="text-xl font-black text-amber-400 mt-1 block">${{ "%.2f"|format(total_sales) }}</span>
+                <span id="cardGrossSales" data-sales="{{ total_sales }}" class="text-xl font-black text-amber-400 mt-1 block">${{ "%.2f"|format(total_sales) }}</span>
                 <span class="text-[10px] text-slate-400">From all non-cancelled orders</span>
             </div>
 
             <div class="bg-white/5 border border-white/10 p-4 rounded-2xl">
-                <span class="text-[11px] text-slate-400 block uppercase font-semibold">Est. Production Cost (55%)</span>
-                <span class="text-xl font-black text-slate-300 mt-1 block">${{ "%.2f"|format(cogs_est) }}</span>
+                <span class="text-[11px] text-slate-400 block uppercase font-semibold">
+                    Est. Production Cost (<span id="cardCogsPct">55%</span>)
+                </span>
+                <span id="cardCogsVal" class="text-xl font-black text-slate-300 mt-1 block">${{ "%.2f"|format(cogs_est) }}</span>
                 <span class="text-[10px] text-slate-400">Cost of Goods / Feeds / Produce</span>
             </div>
 
             <div class="bg-white/5 border border-white/10 p-4 rounded-2xl">
                 <span class="text-[11px] text-slate-400 block uppercase font-semibold">Operating Expenses (10%)</span>
-                <span class="text-xl font-black text-slate-300 mt-1 block">${{ "%.2f"|format(expenses_est) }}</span>
+                <span id="cardExpensesVal" data-expenses="{{ expenses_est }}" class="text-xl font-black text-slate-300 mt-1 block">${{ "%.2f"|format(expenses_est) }}</span>
                 <span class="text-[10px] text-slate-400">Packaging & Cold Logistics</span>
             </div>
 
-            <div class="bg-emerald-950/60 border-2 {% if net_profit >= 0 %}border-emerald-500/80 bg-emerald-900/30{% else %}border-red-500/80 bg-red-900/30{% endif %} p-4 rounded-2xl">
+            <div id="cardNetProfitBox" class="bg-emerald-950/60 border-2 {% if net_profit >= 0 %}border-emerald-500/80 bg-emerald-900/30{% else %}border-red-500/80 bg-red-900/30{% endif %} p-4 rounded-2xl transition-all duration-200">
                 <span class="text-[11px] text-slate-300 block uppercase font-bold flex items-center justify-between">
                     Net Profit / Loss
-                    <span class="{% if net_profit >= 0 %}bg-emerald-500 text-slate-950{% else %}bg-red-500 text-white{% endif %} text-[9px] font-black px-1.5 py-0.5 rounded">
+                    <span id="cardNetProfitBadge" class="{% if net_profit >= 0 %}bg-emerald-500 text-slate-950{% else %}bg-red-500 text-white{% endif %} text-[9px] font-black px-1.5 py-0.5 rounded">
                         {% if net_profit >= 0 %}SURPLUS{% else %}DEFICIT{% endif %}
                     </span>
                 </span>
-                <span class="text-xl font-black {% if net_profit >= 0 %}text-emerald-300{% else %}text-red-300{% endif %} mt-1 block">
+                <span id="cardNetProfitVal" class="text-xl font-black {% if net_profit >= 0 %}text-emerald-300{% else %}text-red-300{% endif %} mt-1 block">
                     ${{ "%.2f"|format(net_profit) }}
                 </span>
-                <span class="text-[10px] text-slate-300">
+                <span id="cardNetMarginVal" class="text-[10px] text-slate-300">
                     {% if total_sales > 0 %}{{ "%.1f"|format(net_profit / total_sales * 100) }}% Net Margin{% else %}0% Margin{% endif %}
                 </span>
             </div>
@@ -148,48 +150,112 @@
             </div>
         </div>
 
-        <!-- Custom Record Checking & Excel Filtering Options -->
-        <div class="bg-black/30 p-5 rounded-2xl border border-white/10">
-            <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3 flex items-center">
-                <i class="fa-solid fa-sliders text-emerald-400 mr-2"></i> Custom Date & Profit Margin Criteria for Excel Download
-            </h4>
-            <form action="{{ url_for('admin_export_excel') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
-                <div>
-                    <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">From Date</label>
-                    <input type="date" name="start_date" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        <!-- Custom Production Cost & Excel Filtering Options (No selection field, custom options only) -->
+        <div class="bg-black/30 p-5 rounded-2xl border border-white/10 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center">
+                    <i class="fa-solid fa-sliders text-emerald-400 mr-2"></i> Custom Cost of Production & Financial Export
+                </h4>
+                <span class="text-[11px] text-amber-400 font-semibold flex items-center">
+                    <i class="fa-solid fa-calculator mr-1.5"></i> Custom Options Only (Selection field removed)
+                </span>
+            </div>
+
+            <form id="financialCriteriaForm" action="{{ url_for('admin_export_excel') }}" method="GET" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">From Date</label>
+                        <input type="date" name="start_date" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">To Date</label>
+                        <input type="date" name="end_date" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">Order Status</label>
+                        <select name="status" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="all">All Orders</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">To Date</label>
-                    <input type="date" name="end_date" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
+                <!-- Custom Cost of Production (Percentage and Value Boxes) -->
+                <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80">
+                    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                        
+                        <div class="flex-1 w-full space-y-2">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <label class="text-[11px] text-amber-300 font-bold uppercase tracking-wider flex items-center">
+                                    <i class="fa-solid fa-coins mr-1.5 text-amber-400"></i> Cost of Production (COGS)
+                                </label>
+                                <div class="flex items-center space-x-2 text-[10px]">
+                                    <span class="text-slate-400">Select Box:</span>
+                                    <label class="inline-flex items-center cursor-pointer bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-700 hover:border-emerald-500 transition">
+                                        <input type="radio" name="cost_mode" id="modePercentage" value="percentage" checked class="text-emerald-500 focus:ring-0 mr-1.5 accent-emerald-500">
+                                        <span class="text-slate-200 font-bold">Percentage (%) Box</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-700 hover:border-amber-500 transition">
+                                        <input type="radio" name="cost_mode" id="modeValue" value="value" class="text-amber-500 focus:ring-0 mr-1.5 accent-amber-500">
+                                        <span class="text-slate-200 font-bold">Value ($) Box</span>
+                                    </label>
+                                </div>
+                            </div>
 
-                <div>
-                    <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">Order Status</label>
-                    <select name="status" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <option value="all">All Orders</option>
-                        <option value="Confirmed">Confirmed</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
-                </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <!-- Percentage Box -->
+                                <div id="percentageBoxWrapper" class="bg-slate-900/90 p-3 rounded-xl border-2 border-emerald-500 transition-all cursor-pointer">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <label for="costPercentageInput" class="text-[11px] text-slate-200 font-bold flex items-center cursor-pointer">
+                                            <i class="fa-solid fa-percent text-emerald-400 mr-1.5"></i> Custom Percentage Box
+                                        </label>
+                                        <span class="text-[9px] uppercase font-bold text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/40">COGS %</span>
+                                    </div>
+                                    <div class="relative">
+                                        <input type="number" id="costPercentageInput" name="cost_percentage" step="0.1" min="0" max="100" value="55" placeholder="55.0"
+                                               class="w-full text-sm font-mono font-black bg-slate-950 border border-slate-700 rounded-lg p-2.5 pr-8 text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-black">%</span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-1">Calculates cost & profit from percentage of gross sales.</p>
+                                </div>
 
-                <div>
-                    <label class="block text-[10px] text-slate-400 font-bold uppercase mb-1">Cost of Production (COGS %)</label>
-                    <select name="cost_ratio" class="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <option value="0.40">40% Cost (60% Gross Margin)</option>
-                        <option value="0.50">50% Cost (50% Gross Margin)</option>
-                        <option value="0.55" selected>55% Cost (Standard Agricultural)</option>
-                        <option value="0.60">60% Cost (40% Gross Margin)</option>
-                        <option value="0.70">70% Cost (30% Gross Margin)</option>
-                    </select>
-                </div>
+                                <!-- Value Box -->
+                                <div id="valueBoxWrapper" class="bg-slate-900/50 p-3 rounded-xl border-2 border-transparent transition-all cursor-pointer">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <label for="costValueInput" class="text-[11px] text-slate-300 font-bold flex items-center cursor-pointer">
+                                            <i class="fa-solid fa-dollar-sign text-amber-400 mr-1.5"></i> Custom Value Box
+                                        </label>
+                                        <span class="text-[9px] uppercase font-bold text-amber-400 bg-amber-950/80 px-1.5 py-0.5 rounded border border-amber-500/40">Direct Cost ($)</span>
+                                    </div>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-black">$</span>
+                                        <input type="number" id="costValueInput" name="cost_value" step="0.01" min="0" value="{{ "%.2f"|format(cogs_est) }}" placeholder="0.00"
+                                               class="w-full text-sm font-mono font-black bg-slate-950 border border-slate-700 rounded-lg p-2.5 pl-7 text-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-1">Calculates cost percentage & net margin from exact dollar amount.</p>
+                                </div>
+                            </div>
 
-                <div class="flex space-x-2">
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs py-2.5 px-3 rounded-xl transition flex items-center justify-center">
-                        <i class="fa-solid fa-file-excel mr-1.5"></i> Export Excel
-                    </button>
+                            <!-- Hidden field to pass decimal ratio to backend export -->
+                            <input type="hidden" id="costRatioHidden" name="cost_ratio" value="0.55">
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex sm:flex-row lg:flex-col gap-2 w-full lg:w-48 flex-shrink-0">
+                            <button type="button" id="btnRecalculate" class="flex-1 lg:flex-none bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center">
+                                <i class="fa-solid fa-calculator mr-1.5"></i> Calculate
+                            </button>
+                            <button type="submit" class="flex-1 lg:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center">
+                                <i class="fa-solid fa-file-excel mr-1.5"></i> Export Excel
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
             </form>
         </div>
@@ -499,6 +565,173 @@
             }
         });
     }
+
+    // Dynamic Cost of Production (Custom Percentage and Value Calculation)
+    document.addEventListener('DOMContentLoaded', function () {
+        const grossSalesElem = document.getElementById('cardGrossSales');
+        const expensesValElem = document.getElementById('cardExpensesVal');
+        const totalSales = parseFloat(grossSalesElem?.dataset.sales || 0);
+        const expenses = parseFloat(expensesValElem?.dataset.expenses || (totalSales * 0.10));
+
+        const pctInput = document.getElementById('costPercentageInput');
+        const valInput = document.getElementById('costValueInput');
+        const ratioHidden = document.getElementById('costRatioHidden');
+        const modePctRadio = document.getElementById('modePercentage');
+        const modeValRadio = document.getElementById('modeValue');
+        const pctWrapper = document.getElementById('percentageBoxWrapper');
+        const valWrapper = document.getElementById('valueBoxWrapper');
+        const btnCalc = document.getElementById('btnRecalculate');
+
+        const cardCogsPct = document.getElementById('cardCogsPct');
+        const cardCogsVal = document.getElementById('cardCogsVal');
+        const cardNetProfitVal = document.getElementById('cardNetProfitVal');
+        const cardNetProfitBadge = document.getElementById('cardNetProfitBadge');
+        const cardNetMargin = document.getElementById('cardNetMarginVal');
+        const cardNetProfitBox = document.getElementById('cardNetProfitBox');
+
+        const topExcelBtn = document.getElementById('btnTopExportExcel');
+        const topCsvBtn = document.getElementById('btnTopExportCsv');
+
+        function setActiveBoxVisual(mode) {
+            if (mode === 'percentage') {
+                pctWrapper.className = 'bg-slate-900/90 p-3 rounded-xl border-2 border-emerald-500 shadow-md transition-all cursor-pointer';
+                valWrapper.className = 'bg-slate-900/50 p-3 rounded-xl border-2 border-transparent transition-all cursor-pointer opacity-90';
+            } else {
+                valWrapper.className = 'bg-slate-900/90 p-3 rounded-xl border-2 border-amber-500 shadow-md transition-all cursor-pointer';
+                pctWrapper.className = 'bg-slate-900/50 p-3 rounded-xl border-2 border-transparent transition-all cursor-pointer opacity-90';
+            }
+        }
+
+        function recalculateCost(source) {
+            let cogsPct = 0;
+            let cogsVal = 0;
+
+            if (source === 'value' || (!source && modeValRadio && modeValRadio.checked)) {
+                cogsVal = parseFloat(valInput.value);
+                if (isNaN(cogsVal) || cogsVal < 0) cogsVal = 0;
+                cogsPct = totalSales > 0 ? (cogsVal / totalSales) * 100 : 0;
+                pctInput.value = cogsPct.toFixed(1);
+            } else {
+                cogsPct = parseFloat(pctInput.value);
+                if (isNaN(cogsPct) || cogsPct < 0) cogsPct = 0;
+                cogsVal = (totalSales * cogsPct) / 100;
+                valInput.value = cogsVal.toFixed(2);
+            }
+
+            const costRatio = totalSales > 0 ? (cogsVal / totalSales) : (cogsPct / 100);
+            if (ratioHidden) {
+                ratioHidden.value = costRatio.toFixed(4);
+            }
+
+            // Recalculate Net Profit / Loss
+            const netProfit = totalSales - (cogsVal + expenses);
+            const netMargin = totalSales > 0 ? (netProfit / totalSales) * 100 : 0;
+
+            // Update KPI Snapshot Cards
+            if (cardCogsPct) cardCogsPct.textContent = cogsPct.toFixed(1) + '%';
+            if (cardCogsVal) cardCogsVal.textContent = '$' + cogsVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            
+            if (cardNetProfitVal) {
+                cardNetProfitVal.textContent = '$' + netProfit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                if (netProfit >= 0) {
+                    cardNetProfitVal.className = 'text-xl font-black text-emerald-300 mt-1 block';
+                    if (cardNetProfitBadge) {
+                        cardNetProfitBadge.className = 'bg-emerald-500 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded';
+                        cardNetProfitBadge.textContent = 'SURPLUS';
+                    }
+                    if (cardNetProfitBox) {
+                        cardNetProfitBox.className = 'bg-emerald-950/60 border-2 border-emerald-500/80 bg-emerald-900/30 p-4 rounded-2xl transition-all duration-200';
+                    }
+                } else {
+                    cardNetProfitVal.className = 'text-xl font-black text-red-300 mt-1 block';
+                    if (cardNetProfitBadge) {
+                        cardNetProfitBadge.className = 'bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded';
+                        cardNetProfitBadge.textContent = 'DEFICIT';
+                    }
+                    if (cardNetProfitBox) {
+                        cardNetProfitBox.className = 'bg-emerald-950/60 border-2 border-red-500/80 bg-red-900/30 p-4 rounded-2xl transition-all duration-200';
+                    }
+                }
+            }
+
+            if (cardNetMargin) {
+                cardNetMargin.textContent = (totalSales > 0 ? netMargin.toFixed(1) : '0') + '% Net Margin';
+            }
+
+            // Keep top export links synchronized with custom ratio
+            if (topExcelBtn) {
+                topExcelBtn.href = '/admin/export/excel?cost_ratio=' + costRatio.toFixed(4);
+            }
+            if (topCsvBtn) {
+                topCsvBtn.href = '/admin/export/csv?cost_ratio=' + costRatio.toFixed(4);
+            }
+        }
+
+        // Radio listeners
+        if (modePctRadio) {
+            modePctRadio.addEventListener('change', function () {
+                setActiveBoxVisual('percentage');
+                recalculateCost('percentage');
+            });
+        }
+        if (modeValRadio) {
+            modeValRadio.addEventListener('change', function () {
+                setActiveBoxVisual('value');
+                recalculateCost('value');
+            });
+        }
+
+        // Box Click selection listeners
+        if (pctWrapper) {
+            pctWrapper.addEventListener('click', function (e) {
+                if (modePctRadio) modePctRadio.checked = true;
+                setActiveBoxVisual('percentage');
+                if (e.target !== pctInput) {
+                    pctInput.focus();
+                }
+                recalculateCost('percentage');
+            });
+        }
+        if (valWrapper) {
+            valWrapper.addEventListener('click', function (e) {
+                if (modeValRadio) modeValRadio.checked = true;
+                setActiveBoxVisual('value');
+                if (e.target !== valInput) {
+                    valInput.focus();
+                }
+                recalculateCost('value');
+            });
+        }
+
+        // Typing / Input listeners
+        if (pctInput) {
+            pctInput.addEventListener('input', function () {
+                if (modePctRadio) modePctRadio.checked = true;
+                setActiveBoxVisual('percentage');
+                recalculateCost('percentage');
+            });
+        }
+        if (valInput) {
+            valInput.addEventListener('input', function () {
+                if (modeValRadio) modeValRadio.checked = true;
+                setActiveBoxVisual('value');
+                recalculateCost('value');
+            });
+        }
+
+        // Calculate button
+        if (btnCalc) {
+            btnCalc.addEventListener('click', function () {
+                const activeMode = modeValRadio && modeValRadio.checked ? 'value' : 'percentage';
+                recalculateCost(activeMode);
+                gifricCart.showToast('Calculations updated!');
+            });
+        }
+
+        // Initial setup
+        setActiveBoxVisual('percentage');
+        recalculateCost('percentage');
+    });
 </script>
 
 {% endblock %}
