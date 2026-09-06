@@ -110,15 +110,15 @@ def services():
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
+        name = (request.form.get('name') or '').strip()
+        email = (request.form.get('email') or '').strip()
+        phone = (request.form.get('phone') or '').strip()
         service_type = request.form.get('service_type', 'general')
-        subject = request.form.get('subject')
-        message = request.form.get('message')
+        subject = (request.form.get('subject') or '').strip()
+        message = (request.form.get('message') or '').strip()
         
-        if not name or not email or not message:
-            flash('Please fill in all required fields.', 'error')
+        if not name or not message:
+            flash('Please fill in your name and message.', 'error')
             return redirect(url_for('contact'))
             
         inquiry = Inquiry(
@@ -145,7 +145,7 @@ def cart():
 def checkout():
     if request.method == 'POST':
         customer_name = request.form.get('customer_name')
-        email = request.form.get('email')
+        email = (request.form.get('email') or '').strip()
         phone = request.form.get('phone')
         delivery_address = request.form.get('delivery_address')
         city = request.form.get('city')

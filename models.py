@@ -87,7 +87,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_number = db.Column(db.String(20), unique=True, nullable=False)
     customer_name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=True)
     phone = db.Column(db.String(30), nullable=False)
     delivery_address = db.Column(db.Text, nullable=False)
     city = db.Column(db.String(100), nullable=False)
@@ -141,7 +141,7 @@ class Inquiry(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=True, default="")
     phone = db.Column(db.String(30), nullable=True)
     service_type = db.Column(db.String(50), nullable=False, default="general") # wholesale, feed, general
     subject = db.Column(db.String(200), nullable=False)

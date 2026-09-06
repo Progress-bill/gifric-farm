@@ -510,8 +510,8 @@
                         <tr class="hover:bg-slate-50/80 transition">
                             <td class="p-4">
                                 <strong class="text-gray-900 block font-bold">{{ inq.name }}</strong>
-                                <span class="text-gray-400 block text-[11px]">{{ inq.email }}</span>
-                                <span class="text-gray-400 block text-[11px]">{{ inq.phone or 'N/A' }}</span>
+                                <span class="text-emerald-800 font-medium block text-[11px]"><i class="fa-solid fa-phone mr-1 text-[10px]"></i> {{ inq.phone or 'N/A' }}</span>
+                                {% if inq.email %}<span class="text-gray-400 block text-[10px]">{{ inq.email }}</span>{% endif %}
                             </td>
                             <td class="p-4 font-bold text-[10px] uppercase text-emerald-800">
                                 <span class="bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">{{ inq.service_type }}</span>
