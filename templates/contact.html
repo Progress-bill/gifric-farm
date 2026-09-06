@@ -97,13 +97,22 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Inquiry Type</label>
-                        <select name="service_type" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
-                            <option value="general">General Inquiry</option>
-                            <option value="wholesale">Wholesale Chicken Supply ($7/bird)</option>
-                            <option value="feed">Poultry Feed & Supplies</option>
-                        </select>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                                Email Address <span class="text-emerald-700 font-normal lowercase">(Optional - Not Compulsory)</span>
+                            </label>
+                            <input type="email" name="email" placeholder="blessing@example.com (optional)" 
+                                   class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Inquiry Type</label>
+                            <select name="service_type" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                                <option value="general">General Inquiry</option>
+                                <option value="wholesale">Wholesale Chicken Supply ($7/bird)</option>
+                                <option value="feed">Poultry Feed & Supplies</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div>
@@ -133,6 +142,8 @@
 <script>
 function sendInquiryViaWhatsApp() {
     const name = document.querySelector('input[name="name"]').value.trim();
+    const emailInput = document.querySelector('input[name="email"]');
+    const email = emailInput ? emailInput.value.trim() : '';
     const phone = document.querySelector('input[name="phone"]').value.trim();
     const serviceType = document.querySelector('select[name="service_type"]');
     const serviceLabel = serviceType ? serviceType.options[serviceType.selectedIndex].text : 'General Inquiry';
@@ -148,6 +159,7 @@ function sendInquiryViaWhatsApp() {
     waMsg += `━━━━━━━━━━━━━━━━━\n`;
     waMsg += `*Name:* ${name}\n`;
     if (phone) waMsg += `*Phone / WhatsApp:* ${phone}\n`;
+    if (email) waMsg += `*Email:* ${email}\n`;
     waMsg += `*Inquiry Type:* ${serviceLabel}\n`;
     if (subject) waMsg += `*Subject:* ${subject}\n`;
     waMsg += `━━━━━━━━━━━━━━━━━\n`;
