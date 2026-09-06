@@ -267,40 +267,8 @@ def admin_login():
 
 @app.route('/admin/register', methods=['GET', 'POST'])
 def admin_register():
-    if request.method == 'POST':
-        username = request.form.get('username', '').strip()
-        email = request.form.get('email', '').strip()
-        password = request.form.get('password', '')
-        confirm_password = request.form.get('confirm_password', '')
-        
-        if not username or not email or not password:
-            flash('All fields are required.', 'error')
-            return redirect(url_for('admin_register'))
-            
-        if password != confirm_password:
-            flash('Passwords do not match.', 'error')
-            return redirect(url_for('admin_register'))
-            
-        if len(password) < 6:
-            flash('Password must be at least 6 characters long.', 'error')
-            return redirect(url_for('admin_register'))
-            
-        existing_user = AdminUser.query.filter((AdminUser.username == username) | (AdminUser.email == email)).first()
-        if existing_user:
-            flash('Username or Email already registered.', 'error')
-            return redirect(url_for('admin_register'))
-            
-        new_admin = AdminUser(username=username, email=email)
-        new_admin.set_password(password)
-        db.session.add(new_admin)
-        db.session.commit()
-        
-        session['admin_id'] = new_admin.id
-        session['admin_username'] = new_admin.username
-        flash('Admin account created successfully!', 'success')
-        return redirect(url_for('admin'))
-        
-    return render_template('admin_register.html')
+    flash('Admin registration is closed. Please sign in with your authorized administrator account.', 'error')
+    return redirect(url_for('admin_login'))
 
 @app.route('/admin/logout')
 def admin_logout():

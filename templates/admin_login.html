@@ -24,8 +24,13 @@
 
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Password</label>
-                <input type="password" name="password" required placeholder="••••••••" 
-                       class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                <div class="relative">
+                    <input type="password" id="adminPassword" name="password" required placeholder="••••••••" 
+                           class="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 pr-11 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white">
+                    <button type="button" id="togglePasswordBtn" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-emerald-700 focus:outline-none transition-colors" title="Show or hide password">
+                        <i id="togglePasswordIcon" class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3.5 px-4 rounded-xl shadow transition text-sm">
@@ -33,12 +38,29 @@
             </button>
         </form>
 
-        <div class="pt-4 border-t border-gray-100 text-center text-xs text-gray-500">
-            Don't have an admin account? 
-            <a href="{{ url_for('admin_register') }}" class="font-bold text-emerald-700 hover:underline">Register New Admin</a>
-        </div>
-
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordInput = document.getElementById('adminPassword');
+        const toggleBtn = document.getElementById('togglePasswordBtn');
+        const toggleIcon = document.getElementById('togglePasswordIcon');
+
+        if (toggleBtn && passwordInput && toggleIcon) {
+            toggleBtn.addEventListener('click', function () {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                if (isPassword) {
+                    toggleIcon.classList.remove('fa-eye');
+                    toggleIcon.classList.add('fa-eye-slash');
+                } else {
+                    toggleIcon.classList.remove('fa-eye-slash');
+                    toggleIcon.classList.add('fa-eye');
+                }
+            });
+        }
+    });
+</script>
 
 {% endblock %}
