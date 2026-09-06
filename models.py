@@ -62,6 +62,10 @@ class Product(db.Model):
     is_halal = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    @property
+    def category_name(self):
+        return self.category.name if self.category else 'Fresh Produce'
+
     def to_dict(self):
         return {
             'id': self.id,

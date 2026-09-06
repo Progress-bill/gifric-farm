@@ -4,17 +4,16 @@ from models import db, Category, Product, Inquiry, Order, OrderItem, AdminUser
 
 def seed_database():
     with app.app_context():
-        # Drop and re-create tables for clean setup
-        db.drop_all()
         db.create_all()
         
-        print("[+] Seeding database for Gifric Farm...")
+        print("[+] Checking database seeding for Gifric Farm...")
 
-        # Default Admin User
-        admin_user = AdminUser(username="admin", email="progressezekiel00@gmail.com")
-        admin_user.set_password("gifricadmin2026")
-        db.session.add(admin_user)
-        db.session.commit()
+        # Default Admin User if not exists
+        if not AdminUser.query.filter_by(username="admin").first():
+            admin_user = AdminUser(username="admin", email="progressezekiel00@gmail.com")
+            admin_user.set_password("gifricadmin2026")
+            db.session.add(admin_user)
+            db.session.commit()
 
         # Categories
         cat_veg = Category(

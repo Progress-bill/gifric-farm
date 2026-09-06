@@ -11,8 +11,14 @@ from whatsapp_service import build_order_whatsapp_message, get_whatsapp_url, sen
 from excel_report_service import generate_financial_excel_report, generate_financial_csv_report
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'gifric-farm-poultry-secret-key-2026-secure'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gifric_farm.db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'gifric-farm-poultry-secret-key-2026-secure')
+db_uri = os.environ.get('DATABASE_URL')
+if db_uri:
+    if db_uri.startswith('postgres://'):
+        db_uri = db_uri.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gifric_farm.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -70,13 +76,13 @@ def index():
 
 @app.route('/products')
 def products():
-    category_slug = request.args.get('category', '')
+    category_slug = request.args.get('category', '').strip()
     search_query = request.args.get('q', '').strip()
     
     query = Product.query
     selected_category = None
     
-    if category_slug:
+    if category_slug and category_slug != 'all':
         selected_category = Category.query.filter_by(slug=category_slug).first()
         if selected_category:
             query = query.filter_by(category_id=selected_category.id)
@@ -84,8 +90,8 @@ def products():
     if search_query:
         query = query.filter(Product.name.ilike(f"%{search_query}%") | Product.description.ilike(f"%{search_query}%"))
         
-    products_list = query.all()
-    categories = Category.query.all()
+    products_list = query.order_by(Product.id.desc()).all()
+    categories = Category.query.order_by(Category.name.asc()).all()
     
     return render_template('products.html', 
                            products=products_list, 
@@ -492,10 +498,29 @@ def admin_add_product():
         elif category_id_val and category_id_val.isdigit():
             category_id = int(category_id_val)
             
-        if not name or not category_id or price is None or not image_url:
-            flash('Please fill in all required product fields (Name, Category, Price, and Image).', 'error')
+        if not name:
+            flash('Product Name is required.', 'error')
             categories = Category.query.order_by(Category.name.asc()).all()
             return render_template('admin_product_form.html', categories=categories, product=None)
+
+        if price is None:
+            price = 0.0
+
+        if not category_id:
+            first_cat = Category.query.first()
+            if first_cat:
+                category_id = first_cat.id
+            else:
+                new_cat = Category(name="General Farm Produce", slug="general-farm-produce", description="Fresh farm produce")
+                db.session.add(new_cat)
+                db.session.flush()
+                category_id = new_cat.id
+
+        if not image_url:
+            image_url = "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=800&q=80"
+
+        if not description:
+            description = f"Fresh quality {name} direct from Gifric Farm estate in Hatfield, Harare."
             
         base_slug = slugify(name)
         slug = base_slug
