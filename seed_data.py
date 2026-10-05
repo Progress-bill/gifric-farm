@@ -2,18 +2,39 @@ import os
 from app import app
 from models import db, Category, Product, Inquiry, Order, OrderItem, AdminUser
 
+def setup_admin_accounts():
+    """Ensure exactly 2 admin accounts exist with requested credentials."""
+    allowed_admins = {
+        "Gifricfarm": ("info@gifricfarm.com", "gifricadmin@2026!"),
+        "Progress": ("progressezekiel00@gmail.com", "Progress@0239!")
+    }
+    
+    # Remove any other admin accounts to strictly maintain only 2
+    existing_users = AdminUser.query.all()
+    for user in existing_users:
+        if user.username not in allowed_admins:
+            db.session.delete(user)
+    db.session.commit()
+
+    # Create or update the 2 accounts with accurate passwords
+    for uname, (email, pwd) in allowed_admins.items():
+        admin = AdminUser.query.filter_by(username=uname).first()
+        if not admin:
+            admin = AdminUser(username=uname, email=email)
+            admin.set_password(pwd)
+            db.session.add(admin)
+        else:
+            admin.email = email
+            admin.set_password(pwd)
+    db.session.commit()
+    print("[+] Verified exact 2 admin accounts: Gifricfarm & Progress")
+
 def seed_database():
     with app.app_context():
         db.create_all()
         
         print("[+] Checking database seeding for Gifric Farm...")
-
-        # Default Admin User if not exists
-        if not AdminUser.query.filter_by(username="admin").first():
-            admin_user = AdminUser(username="admin", email="progressezekiel00@gmail.com")
-            admin_user.set_password("gifricadmin2026")
-            db.session.add(admin_user)
-            db.session.commit()
+        setup_admin_accounts()
 
         # Categories
         cat_veg = Category(

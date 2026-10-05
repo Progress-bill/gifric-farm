@@ -646,6 +646,13 @@ with app.app_context():
         except Exception as e:
             print(f"[-] Auto-seed notice: {e}")
 
+    # Ensure the only 2 allowed admin accounts exist with exact requested credentials
+    try:
+        from seed_data import setup_admin_accounts
+        setup_admin_accounts()
+    except Exception as e:
+        print(f"[-] Admin sync notice: {e}")
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() in ['true', '1']
